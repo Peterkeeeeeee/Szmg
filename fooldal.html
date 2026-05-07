@@ -9,10 +9,21 @@
     <style>
         :root {
             --white: #ffffff;
-            --orange: #ff9800; /* Second color */
-            --dark-blue: #1e3a8a; /* Third color */
+            --orange: #ff9800;
+            --dark-blue: #1e3a8a;
             --gray: #f4f4f4;
             --text: #333;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+        }
+
+        /* Sötét mód színei */
+        body.dark-mode {
+            --white: #0f172a;
+            --gray: #1e293b;
+            --text: #f1f5f9;
+            --card-bg: #1e293b;
+            --sidebar-bg: #0f172a;
         }
 
         body {
@@ -23,6 +34,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            transition: 0.3s ease;
         }
 
         /* Fejléc */
@@ -33,6 +45,7 @@
             padding: 15px 20px;
             background: var(--white);
             border-bottom: 2px solid var(--gray);
+            z-index: 100;
         }
 
         .header-left i { color: var(--dark-blue); font-size: 22px; cursor: pointer; }
@@ -50,29 +63,81 @@
             justify-content: center;
             font-weight: bold;
             cursor: pointer;
-            border: 2px solid var(--dark-blue);
-            transition: 0.3s;
+            position: relative;
         }
-        .profile-btn:hover { background: transparent; color: var(--dark-blue); }
+
+        /* Profil Menü (Dropdown) */
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--gray);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 180px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .profile-menu button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: none;
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-menu button:hover { background: var(--gray); }
+
+        /* Oldalsáv (Sidebar) */
+        #sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            transition: 0.4s;
+            z-index: 200;
+            padding-top: 60px;
+        }
+
+        #sidebar.active { left: 0; }
+
+        .sidebar-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .sidebar-item:hover { background: var(--gray); color: var(--orange); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
 
         /* Központi rész */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            transition: 0.5s;
-        }
-
-        /* Lebegő Mappa Kocka */
-        #folder-view {
-            text-align: center;
-        }
+        main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
 
         .floating-folder {
-            background: var(--white);
+            background: var(--card-bg);
             width: 220px;
             height: 220px;
             border-radius: 24px;
@@ -83,50 +148,14 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             border: 1px solid var(--gray);
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+            transition: 0.4s;
         }
 
-        .floating-folder:hover {
-            transform: translateY(-15px) scale(1.05);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            border-color: var(--orange);
-        }
+        .floating-folder:hover { transform: translateY(-10px); border-color: var(--orange); }
+        .floating-folder i { font-size: 80px; color: var(--orange); margin-bottom: 15px; }
 
-        .floating-folder i {
-            font-size: 80px;
-            color: var(--orange);
-            margin-bottom: 15px;
-        }
-
-        .floating-folder span {
-            font-weight: 700;
-            color: var(--dark-blue);
-            font-size: 18px;
-        }
-
-        /* Fájlok listája (alapból rejtve) */
-        #file-view {
-            display: none;
-            width: 100%;
-            max-width: 600px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--orange);
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 20px;
-        }
-
-        .file-list { display: flex; flex-direction: column; gap: 12px; }
-
+        /* Fájl lista nézet */
+        #file-view { display: none; width: 100%; max-width: 600px; animation: fadeIn 0.4s; }
         .file-item {
             background: var(--gray);
             padding: 15px;
@@ -135,28 +164,36 @@
             align-items: center;
             justify-content: space-between;
             text-decoration: none;
-            color: var(--dark-blue);
-            font-weight: 600;
-            transition: 0.2s;
+            color: var(--text);
+            margin-bottom: 10px;
         }
-        .file-item:hover { background: #e9e9e9; transform: scale(1.02); }
-        .file-item i { color: var(--orange); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body>
+<body id="body">
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div id="sidebar">
+    <a href="#" class="sidebar-item" onclick="toggleSidebar()"><i class="fas fa-home"></i> Kezdőlap</a>
+    <a href="admin.html" class="sidebar-item"><i class="fas fa-user-shield"></i> Admin felület</a>
+    <a href="#" class="sidebar-item" onclick="alert('Email: info@szmg.hu\nTel: +36 1 234 5678')"><i class="fas fa-envelope"></i> Elérhetőségek</a>
+    <a href="#" class="sidebar-item" onclick="logout()" style="color: #f43f5e; margin-top: 20px;"><i class="fas fa-sign-out-alt"></i> Kijelentkezés</a>
+</div>
 
 <header>
     <div class="header-left">
-        <i class="fas fa-bars"></i>
+        <i class="fas fa-bars" onclick="toggleSidebar()"></i>
     </div>
     <div class="logo">SZMG <span>ONLINE</span></div>
     <div class="header-right">
-        <div class="profile-btn" id="user-initial" onclick="logout()">?</div>
+        <div class="profile-btn" id="user-initial" onclick="toggleProfileMenu()">?
+            <div class="profile-menu" id="p-menu">
+                <button onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Sötét mód</button>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Kilépés</button>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -169,12 +206,10 @@
     </div>
 
     <div id="file-view">
-        <button class="back-btn" onclick="closeFolder()">
+        <button onclick="closeFolder()" style="background:none; border:none; color:var(--orange); cursor:pointer; margin-bottom:15px; font-weight:bold;">
             <i class="fas fa-arrow-left"></i> Vissza
         </button>
-        <h2 style="color: var(--dark-blue);">Fizika 9. anyagok</h2>
-        <div class="file-list" id="file-container">
-            </div>
+        <div id="file-container"></div>
     </div>
 </main>
 
@@ -183,36 +218,49 @@
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
     const sb = supabase.createClient(SB_URL, SB_KEY);
 
+    // Sötét mód kezelése
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkTheme', isDark);
+    }
+
+    if (localStorage.getItem('darkTheme') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+
+    // Menük vezérlése
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleProfileMenu() {
+        const menu = document.getElementById('p-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
     async function init() {
         const { data: { user } } = await sb.auth.getUser();
         if (!user) { window.location.href = "index.html"; return; }
-        document.getElementById('user-initial').innerText = user.email[0].toUpperCase();
+        document.getElementById('user-initial').childNodes[0].nodeValue = user.email[0].toUpperCase();
     }
 
     async function openFolder() {
         document.getElementById('folder-view').style.display = 'none';
-        const fileView = document.getElementById('file-view');
-        fileView.style.display = 'block';
-
+        document.getElementById('file-view').style.display = 'block';
         const container = document.getElementById('file-container');
         container.innerHTML = "<p>Betöltés...</p>";
-
-        const { data, error } = await sb.from('Fizika 9').select('*');
+        const { data } = await sb.from('Fizika 9').select('*');
         container.innerHTML = "";
-
-        if (data) {
-            data.forEach(file => {
-                const item = document.createElement('a');
-                item.className = 'file-item';
-                item.href = file.Fájl;
-                item.target = "_blank";
-                item.innerHTML = `
-                    <span>${file.Leírás}</span>
-                    <i class="fas fa-chevron-right"></i>
-                `;
-                container.appendChild(item);
-            });
-        }
+        data.forEach(file => {
+            const a = document.createElement('a');
+            a.className = 'file-item';
+            a.href = file.Fájl; a.target = "_blank";
+            a.innerHTML = `<span>${file.Leírás}</span><i class="fas fa-chevron-right"></i>`;
+            container.appendChild(a);
+        });
     }
 
     function closeFolder() {
@@ -221,14 +269,11 @@
     }
 
     async function logout() {
-        if(confirm("Kijelentkezés?")) {
-            await sb.auth.signOut();
-            window.location.href = "index.html";
-        }
+        await sb.auth.signOut();
+        window.location.href = "index.html";
     }
 
     init();
 </script>
-
 </body>
 </html>
