@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leckék és Jegyzetek</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto 30px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        h1 { color: var(--primary); margin: 0; }
+        .user-nav { font-size: 14px; }
+        .logout-btn { background: #f43f5e; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-left: 10px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .lesson-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #334155; transition: 0.3s; }
+        .lesson-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .lesson-card h3 { margin-top: 0; color: var(--primary); }
+        .lesson-card p { color: #94a3b8; font-size: 14px; line-height: 1.5; }
+        .open-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: var(--primary); color: var(--bg); text-decoration: none; border-radius: 6px; font-weight: bold; width: 100%; text-align: center; box-sizing: border-box; }
+        
+        .no-content { text-align: center; grid-column: 1 / -1; padding: 50px; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SuliApp Jegyzetek</h1>
+    <div class="user-nav">
+        <span id="user-email">...</span>
+        <button class="logout-btn" onclick="logout()">Kijelentkezés</button>
+    </div>
+</header>
+
+<div class="grid" id="lessons-container">
+    <div class="no-content">Jegyzetek betöltése...</div>
+</div>
+
+<script>
+    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+
+    // 1. Felhasználó ellenőrzése
+    async function checkUser() {
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) {
+            window.location.href = "index.html";
+        } else {
+            document.getElementById('user-email').innerText = user.email;
+            fetchLessons(); // Ha be van lépve, lekérjük a leckéket
+        }
+    }
+
+    // 2. Leckék lekérése az adatbázisból
+    async function fetchLessons() {
+        const container = document.getElementById('lessons-container');
+        
+        // Lekérjük a 'lessons' tábla tartalmát
+        const { data: lessons, error } = await sb
+            .from('lessons')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Hiba:", error);
+            container.innerHTML = '<div class="no-content">Hiba történt a leckék betöltésekor. Hozd létre a "lessons" táblát a Supabase-ben!</div>';
+            return;
+        }
+
+        if (lessons.length === 0) {
+            container.innerHTML = '<div class="no-content">Még nincsenek feltöltött leckék.</div>';
+            return;
+        }
+
+        container.innerHTML = ""; // Töröljük a töltő üzenetet
+        
+        lessons.forEach(lesson => {
+            const card = document.createElement('div');
+            card.className = 'lesson-card';
+            card.innerHTML = `
+                <h3>${lesson.title}</h3>
+                <p>${lesson.description || 'Nincs leírás.'}</p>
+                <a href="${lesson.file_url}" target="_blank" class="open-btn">Megnyitás</a>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    async function logout() {
+        await sb.auth.signOut();
+        window.location.href = "index.html";
+    }
+
+    checkUser();
+</script>
+</body>
+</html>
 
