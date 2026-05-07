@@ -2,70 +2,46 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Feltöltés</title>
+    <title>Admin Feltöltő</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; padding-top: 50px; }
-        .form-card { background: #1e293b; padding: 30px; border-radius: 12px; width: 400px; border: 1px solid #38bdf8; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .card { background: #1e293b; padding: 30px; border-radius: 12px; width: 350px; border: 1px solid #38bdf8; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #0ea5e9; }
-        #status { margin-top: 15px; text-align: center; font-weight: bold; }
+        button { width: 100%; padding: 12px; background: #38bdf8; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
     </style>
 </head>
 <body>
+    <div class="card">
+        <h2>Új Fizika Lecke</h2>
+        <input type="text" id="leiras" placeholder="Lecke címe / Leírás">
+        <input type="text" id="fajl" placeholder="Link a fájlhoz (https://...)">
+        <button onclick="mentes()">Feltöltés</button>
+        <p id="status" style="text-align:center; margin-top:10px;"></p>
+    </div>
 
-<div class="form-card">
-    <h2>Új jegyzet feltöltése</h2>
-    <p style="font-size: 12px; color: #94a3b8;">Tábla: Fizika 9</p>
-    
-    <label>Lecke címe / Leírás:</label>
-    <input type="text" id="leiras" placeholder="Pl.: Newton II. törvénye">
-    
-    <label>Fájl linkje (Drive, PDF, stb.):</label>
-    <input type="text" id="fajl" placeholder="https://...">
-    
-    <button onclick="feltoltes()">Adatok mentése</button>
-    <div id="status"></div>
-</div>
+    <script>
+        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg");
 
-<script>
-    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
-    const sb = supabase.createClient(SB_URL, SB_KEY);
+        async function mentes() {
+            const l = document.getElementById('leiras').value;
+            const f = document.getElementById('fajl').value;
+            const s = document.getElementById('status');
 
-    async function feltoltes() {
-        const leirasErtek = document.getElementById('leiras').value;
-        const fajlLink = document.getElementById('fajl').value;
-        const statusDiv = document.getElementById('status');
+            if(!l || !f) { alert("Töltsd ki mindkettőt!"); return; }
 
-        if (!leirasErtek || !fajlLink) {
-            alert("Kérlek töltsd ki mindkét mezőt!");
-            return;
+            const { error } = await sb.from('Fizika 9').insert([{ Leírás: l, Fájl: f }]);
+
+            if(error) {
+                s.innerText = "Hiba: " + error.message;
+                s.style.color = "red";
+            } else {
+                s.innerText = "Sikeres feltöltés! ✅";
+                s.style.color = "lightgreen";
+                document.getElementById('leiras').value = "";
+                document.getElementById('fajl').value = "";
+            }
         }
-
-        statusDiv.innerText = "Küldés...";
-        statusDiv.style.color = "white";
-
-        // Itt küldjük be az adatokat a Te oszlopneveiddel
-        const { error } = await sb
-            .from('Fizika 9')
-            .insert([{ 
-                Leírás: leirasErtek, 
-                Fájl: fajlLink 
-            }]);
-
-        if (error) {
-            statusDiv.innerText = "Hiba történt: " + error.message;
-            statusDiv.style.color = "#f43f5e";
-        } else {
-            statusDiv.innerText = "Sikeres feltöltés! 🎉";
-            statusDiv.style.color = "#38bdf8";
-            document.getElementById('leiras').value = "";
-            document.getElementById('fajl').value = "";
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
-
