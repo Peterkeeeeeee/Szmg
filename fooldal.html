@@ -2,76 +2,37 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fizika Jegyzetek</title>
+    <title>Fizika 9 Jegyzetek</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; }
-        header { max-width: 800px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto; }
-        .card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center; }
-        .card h3 { margin: 0 0 15px 0; color: #38bdf8; }
-        .btn { display: inline-block; background: #38bdf8; color: #0f172a; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background: #0ea5e9; }
-        .logout { background: none; border: 1px solid #f43f5e; color: #f43f5e; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; text-align: center; }
+        .btn { display: inline-block; background: #38bdf8; color: #0f172a; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
+    <h1>Fizika 9. osztályos anyagok</h1>
+    <div id="lista" class="grid">Betöltés...</div>
 
-<header>
-    <h1>Fizika 9. Jegyzetek</h1>
-    <button class="logout" onclick="kijelentkezes()">Kilépés</button>
-</header>
+    <script>
+        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg");
 
-<div class="grid" id="lista">
-    <p>Betöltés...</p>
-</div>
+        async function betoltes() {
+            const { data, error } = await sb.from('Fizika 9').select('*');
+            const lista = document.getElementById('lista');
+            lista.innerHTML = "";
 
-<script>
-    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
-    const sb = supabase.createClient(SB_URL, SB_KEY);
-
-    async function adatokLekerese() {
-        // Ellenőrizzük, be van-e lépve
-        const { data: { user } } = await sb.auth.getUser();
-        if (!user) { window.location.href = "index.html"; return; }
-
-        // Adatok lekérése a Fizika 9 táblából
-        const { data: jegyzetek, error } = await sb
-            .from('Fizika 9')
-            .select('*');
-
-        const listaDiv = document.getElementById('lista');
-        listaDiv.innerHTML = "";
-
-        if (error) {
-            listaDiv.innerHTML = "Hiba az adatok lekérésekor.";
-            return;
+            if(data) {
+                data.forEach(sor => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `<h3>${sor.Leírás}</h3><a href="${sor.Fájl}" target="_blank" class="btn">Megnyitás</a>`;
+                    lista.appendChild(div);
+                });
+            }
         }
-
-        if (jegyzetek.length === 0) {
-            listaDiv.innerHTML = "Még nincsenek feltöltött jegyzetek.";
-            return;
-        }
-
-        jegyzetek.forEach(sor => {
-            const kartya = document.createElement('div');
-            kartya.className = 'card';
-            kartya.innerHTML = `
-                <h3>${sor.Leírás}</h3>
-                <a href="${sor.Fájl}" target="_blank" class="btn">Megnyitás</a>
-            `;
-            listaDiv.appendChild(kartya);
-        });
-    }
-
-    async function kijelentkezes() {
-        await sb.auth.signOut();
-        window.location.href = "index.html";
-    }
-
-    adatokLekerese();
-</script>
+        betoltes();
+    </script>
 </body>
 </html>
