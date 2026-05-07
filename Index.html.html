@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bejelentkezés</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 350px; text-align: center; }
+        h2 { margin-bottom: 20px; color: #3ecf8e; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #333; border-radius: 5px; background: #252525; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #3ecf8e; color: #121212; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #36b87d; transform: translateY(-2px); }
+        .toggle { margin-top: 15px; font-size: 14px; color: #aaa; cursor: pointer; }
+        .toggle span { color: #3ecf8e; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 id="form-title">Bejelentkezés</h2>
+    <input type="email" id="email" placeholder="Email cím">
+    <input type="password" id="password" placeholder="Jelszó">
+    <button id="submit-btn" onclick="handleAuth()">Belépés</button>
+    <div class="toggle" onclick="toggleMode()">
+        <span id="toggle-text">Nincs fiókod? Regisztrálj!</span>
+    </div>
+</div>
+
+<script>
+    // --- KONFIGURÁCIÓ ---
+    const SUPABASE_URL = 'https://twsvzhvpobowxeibhypy.supabase.co';
+    const SUPABASE_KEY = 'IDE_MÁSOLD_AZ_ANON_PUBLIC_KULCSOT'; // <--- Ezt másold be ide!
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let isLogin = true;
+
+    function toggleMode() {
+        isLogin = !isLogin;
+        document.getElementById('form-title').innerText = isLogin ? "Bejelentkezés" : "Regisztráció";
+        document.getElementById('submit-btn').innerText = isLogin ? "Belépés" : "Regisztráció";
+        document.getElementById('toggle-text').innerText = isLogin ? "Nincs fiókod? Regisztrálj!" : "Már van fiókod? Lépj be!";
+    }
+
+    async function handleAuth() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (!email || !password) {
+            alert("Kérlek töltsd ki mindkét mezőt!");
+            return;
+        }
+
+        if (isLogin) {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) alert("Hiba a belépésnél: " + error.message);
+            else window.location.href = 'fooldal.html';
+        } else {
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) alert("Hiba a regisztrációnál: " + error.message);
+            else alert("Regisztráció elküldve! Ha kikapcsoltad az email-visszaigazolást, máris beléphetsz.");
+        }
+    }
+</script>
+</body>
+</html>
