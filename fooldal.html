@@ -1,38 +1,244 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Fizika 9 Jegyzetek</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Saját Drive</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; text-align: center; }
-        .btn { display: inline-block; background: #38bdf8; color: #0f172a; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+        :root {
+            --google-gray: #5f6368;
+            --google-blue: #1a73e8;
+            --bg-color: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #202124;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Fejléc / Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--google-gray);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .btn-icon:hover { background-color: #f1f3f4; }
+
+        .logo { font-size: 20px; font-weight: 500; color: var(--google-gray); }
+
+        .profile-circle {
+            width: 32px;
+            height: 32px;
+            background-color: #1a73e8;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Tartalom */
+        main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .breadcrumb {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--google-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Mappa Stílus */
+        .folder-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--google-gray);
+            margin-bottom: 15px;
+        }
+
+        .folder-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 250px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .folder-card:hover { background-color: #f8f9fa; }
+        .folder-card i { color: var(--google-gray); font-size: 24px; }
+
+        /* Fájlok listája */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .file-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .file-card:hover { box-shadow: 0 1px 3px rgba(60,64,67,0.3); }
+
+        .file-preview {
+            height: 100px;
+            background-color: #f1f3f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adadad;
+            font-size: 40px;
+        }
+
+        .file-info {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .file-info i { color: #1a73e8; }
+
+        /* Mobil nézet */
+        @media (max-width: 600px) {
+            .file-grid { grid-template-columns: 1fr 1fr; }
+            .folder-card { width: 100%; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
-    <h1>Fizika 9. osztályos anyagok</h1>
-    <div id="lista" class="grid">Betöltés...</div>
 
-    <script>
-        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg");
+<header>
+    <div class="header-left">
+        <button class="btn-icon"><i class="fas fa-bars"></i></button>
+        <div class="logo">Drive</div>
+    </div>
+    <div class="header-right">
+        <button class="btn-icon" onclick="window.location.href='admin.html'"><i class="fas fa-plus"></i></button>
+        <div class="profile-circle" id="user-initial" onclick="logout()">?</div>
+    </div>
+</header>
 
-        async function betoltes() {
-            const { data, error } = await sb.from('Fizika 9').select('*');
-            const lista = document.getElementById('lista');
-            lista.innerHTML = "";
+<main>
+    <div class="breadcrumb">
+        Saját meghajtó <i class="fas fa-chevron-right" style="font-size: 12px;"></i>
+    </div>
 
-            if(data) {
-                data.forEach(sor => {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.innerHTML = `<h3>${sor.Leírás}</h3><a href="${sor.Fájl}" target="_blank" class="btn">Megnyitás</a>`;
-                    lista.appendChild(div);
-                });
-            }
+    <div class="folder-section">
+        <div class="section-title">Mappák</div>
+        <div class="folder-card">
+            <i class="fas fa-folder"></i>
+            <span>Fizika 9.</span>
+        </div>
+    </div>
+
+    <div class="section-title">Fájlok</div>
+    <div class="file-grid" id="file-list">
+        </div>
+</main>
+
+<script>
+    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+
+    async function loadApp() {
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) {
+            window.location.href = "index.html";
+            return;
         }
-        betoltes();
-    </script>
+        
+        // Felhasználó kezdőbetűje a profilhoz
+        document.getElementById('user-initial').innerText = user.email[0].toUpperCase();
+
+        // Fájlok betöltése
+        const { data, error } = await sb.from('Fizika 9').select('*');
+        const container = document.getElementById('file-list');
+        container.innerHTML = "";
+
+        if (data) {
+            data.forEach(file => {
+                const card = document.createElement('a');
+                card.className = 'file-card';
+                card.href = file.Fájl;
+                card.target = "_blank";
+                card.innerHTML = `
+                    <div class="file-preview">
+                        <i class="far fa-file-pdf"></i>
+                    </div>
+                    <div class="file-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>${file.Leírás}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    }
+
+    async function logout() {
+        if(confirm("Ki akarsz jelentkezni?")) {
+            await sb.auth.signOut();
+            window.location.href = "index.html";
+        }
+    }
+
+    loadApp();
+</script>
+
 </body>
 </html>
