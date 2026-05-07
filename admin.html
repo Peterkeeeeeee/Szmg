@@ -2,73 +2,187 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Csak Tanárnak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SZMG Online</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; padding-top: 50px; margin: 0; }
-        .card { background: #1e293b; padding: 30px; border-radius: 12px; width: 350px; border: 1px solid #f43f5e; box-shadow: 0 10px 20px rgba(0,0,0,0.4); display: none; } /* Alapból rejtve */
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #f43f5e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        #status { text-align: center; margin-top: 15px; }
-        .forbidden { text-align: center; color: #f43f5e; padding: 50px; }
+        :root { --white: #ffffff; --orange: #ff9800; --dark-blue: #1e3a8a; --gray: #f4f4f4; --text: #333; --red: #f43f5e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--gray); color: var(--text); margin: 0; }
+        header { background: var(--dark-blue); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+        
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        h2 { color: var(--dark-blue); border-bottom: 2px solid var(--orange); padding-bottom: 5px; }
+
+        /* Form stílus */
+        .form-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; flex: 1; min-width: 150px; }
+        .btn-add { background: var(--orange); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Táblázat stílus */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #f8f9fa; color: var(--dark-blue); }
+        .btn-del { color: var(--red); cursor: pointer; background: none; border: none; }
+        .btn-edit { color: var(--dark-blue); cursor: pointer; background: none; border: none; margin-right: 10px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #ddd; border-radius: 6px; font-weight: bold; }
+        .tab-btn.active { background: var(--dark-blue); color: white; }
+        .section { display: none; }
+        .section.active { display: block; }
     </style>
 </head>
 <body>
 
-    <div id="forbidden-msg" class="forbidden" style="display:none;">
-        <h1>Hoppá! ⛔</h1>
-        <p>Nincs jogosultságod ezen az oldalon tartózkodni.</p>
-        <button onclick="window.location.href='index.html'" style="background:#38bdf8; width:auto;">Vissza a belépéshez</button>
+<header>
+    <div class="logo">SZMG <span>Admin</span></div>
+    <button onclick="window.location.href='fooldal.html'" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">Vissza a főoldalra</button>
+</header>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showSection('files')">Anyagok kezelése</button>
+        <button class="tab-btn" onclick="showSection('users')">Felhasználók</button>
     </div>
 
-    <div class="card" id="admin-ui">
-        <h2>Admin - Új Fizika Lecke</h2>
-        <p id="welcome-text" style="font-size: 12px; color: #94a3b8;"></p>
-        <input type="text" id="leiras" placeholder="Lecke címe (pl. Newton I.)">
-        <input type="text" id="fajl" placeholder="Link a fájlhoz (Google Drive)">
-        <button onclick="mentes()">Feltöltés az adatbázisba</button>
-        <div id="status"></div>
+    <div id="files" class="section active">
+        <div class="card">
+            <h2>Új anyag feltöltése</h2>
+            <div class="form-group">
+                <input type="text" id="file-title" placeholder="Lecke címe">
+                <input type="text" id="file-url" placeholder="Fájl link (Google Drive)">
+                <select id="file-class">
+                    <option value="9">9. osztály</option>
+                    <option value="10">10. osztály</option>
+                </select>
+                <button class="btn-add" onclick="uploadFile()">Feltöltés</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Feltöltött anyagok</h2>
+            <table id="files-table">
+                <thead>
+                    <tr>
+                        <th>Cím</th>
+                        <th>Osztály</th>
+                        <th>Dátum</th>
+                        <th>Műveletek</th>
+                    </tr>
+                </thead>
+                <tbody id="files-body"></tbody>
+            </table>
+        </div>
     </div>
 
-    <script>
-        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg");
+    <div id="users" class="section">
+        <div class="card">
+            <h2>Regisztrált felhasználók</h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Jogosultság</th>
+                        <th>Látható osztály</th>
+                        <th>Mentés</th>
+                    </tr>
+                </thead>
+                <tbody id="users-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-        // --- ADMIN ELLENŐRZÉS ---
-        async function checkAdmin() {
-            const { data: { user } } = await sb.auth.getUser();
+<script>
+    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+    const SB_KEY = "YOUR_SUPABASE_KEY"; // Használd a saját kulcsod
+    const sb = supabase.createClient(SB_URL, SB_KEY);
 
-            // IDE ÍRD BE A SAJÁT EMAIL CÍMEDET, AMIVEL REGISZTRÁLTÁL!
-            const adminEmail = "simon.peter1047@gmail.com"; 
+    // Tab váltás
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+        if(id === 'files') loadFiles();
+        if(id === 'users') loadUsers();
+    }
 
-            if (!user || user.email !== adminEmail) {
-                document.getElementById('forbidden-msg').style.display = 'block';
-            } else {
-                document.getElementById('admin-ui').style.display = 'block';
-                document.getElementById('welcome-text').innerText = "Belépve mint: " + user.email;
-            }
+    // --- ANYAGOK FUNKCIÓI ---
+    async function loadFiles() {
+        const { data } = await sb.from('Fizika 9').select('*').order('created_at', { ascending: false });
+        const body = document.getElementById('files-body');
+        body.innerHTML = "";
+        data.forEach(item => {
+            const date = new Date(item.created_at).toLocaleDateString('hu-HU');
+            body.innerHTML += `
+                <tr>
+                    <td>${item.Leírás}</td>
+                    <td>${item.osztaly || '9'}.</td>
+                    <td>${date}</td>
+                    <td>
+                        <button class="btn-del" onclick="deleteFile('${item.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async function uploadFile() {
+        const title = document.getElementById('file-title').value;
+        const url = document.getElementById('file-url').value;
+        const cls = document.getElementById('file-class').value;
+        if(!title || !url) return alert("Tölts ki mindent!");
+        
+        await sb.from('Fizika 9').insert([{ Leírás: title, Fájl: url, osztaly: cls }]);
+        loadFiles();
+    }
+
+    async function deleteFile(id) {
+        if(confirm("Biztosan törlöd?")) {
+            await sb.from('Fizika 9').delete().eq('id', id);
+            loadFiles();
         }
+    }
 
-        async function mentes() {
-            const l = document.getElementById('leiras').value;
-            const f = document.getElementById('fajl').value;
-            const s = document.getElementById('status');
+    // --- FELHASZNÁLÓK FUNKCIÓI ---
+    async function loadUsers() {
+        const { data } = await sb.from('profiles').select('*');
+        const body = document.getElementById('users-body');
+        body.innerHTML = "";
+        data.forEach(user => {
+            body.innerHTML += `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>
+                        <select onchange="updateUser('${user.id}', 'is_admin', this.value === 'true')">
+                            <option value="false" ${!user.is_admin ? 'selected' : ''}>Felhasználó</option>
+                            <option value="true" ${user.is_admin ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateUser('${user.id}', 'class', this.value)">
+                            <option value="9" ${user.class === '9' ? 'selected' : ''}>9. osztály</option>
+                            <option value="10" ${user.class === '10' ? 'selected' : ''}>10. osztály</option>
+                            <option value="all" ${user.class === 'all' ? 'selected' : ''}>Mindegyik</option>
+                        </select>
+                    </td>
+                    <td><i class="fas fa-check" style="color:green"></i></td>
+                </tr>
+            `;
+        });
+    }
 
-            if(!l || !f) return;
+    async function updateUser(id, field, value) {
+        const updateData = {};
+        updateData[field] = value;
+        await sb.from('profiles').update(updateData).eq('id', id);
+    }
 
-            const { error } = await sb.from('Fizika 9').insert([{ Leírás: l, Fájl: f }]);
-
-            if(error) {
-                s.innerText = "Hiba: " + error.message;
-                s.style.color = "red";
-            } else {
-                s.innerText = "Sikeresen kikerült a főoldalra! ✅";
-                s.style.color = "lightgreen";
-                document.getElementById('leiras').value = "";
-                document.getElementById('fajl').value = "";
-            }
-        }
-
-        checkAdmin();
-    </script>
+    loadFiles();
+</script>
 </body>
 </html>
