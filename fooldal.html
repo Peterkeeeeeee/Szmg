@@ -3,213 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SZMG Online - Liquid Glass UI</title>
-    <style>
-        :root {
-            --bg-color: #0c0e14; /* Deep, iridescent dark blue-black */
-            --glass-bg: rgba(255, 255, 255, 0.05); /* Highly translucent white */
-            --glass-border: rgba(255, 255, 255, 0.1); /* Subtle edge */
-            --text-main: #ffffff;
-            --text-sub: #b0b3b8;
-            --iridescent-gradient: linear-gradient(135deg, #a0feff 0%, #ff89f8 50%, #ff6e6e 100%);
-            --blur-strength: 25px; /* Deep blur like control center */
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* Apple-style system font */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Full-screen iridescent refraction layer behind content */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 15% 15%, rgba(160, 254, 255, 0.1), transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(255, 110, 110, 0.1), transparent 40%);
-            z-index: -1;
-        }
-
-        .liquid-glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(var(--blur-strength));
-            -webkit-backdrop-filter: blur(var(--blur-strength));
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            margin-top: 100px; /* Centered in viewport */
-        }
-
-        .logo-header {
-            color: var(--text-sub);
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .bejelentkezes-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            width: 100%;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-label {
-            color: var(--text-sub);
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03); /* Extremely low visibility input bg */
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: rgba(160, 254, 255, 0.5); /* Soft iridescent focus color */
-        }
-
-        .belépes-button {
-            width: 100%;
-            padding: 14px;
-            background: var(--iridescent-gradient);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-
-        .belépes-button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(255, 110, 110, 0.3);
-        }
-
-        .help-text {
-            color: var(--text-sub);
-            font-size: 0.9rem;
-        }
-
-        /* Main app content areas to show drift and depth */
-        .app-drift-container {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 80px; /* Offset for floating view */
-        }
-
-        .folder-group {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .glass-folder {
-            background: rgba(255, 255, 255, 0.02); /* More transparent background for folders */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 20px 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: var(--text-sub);
-            transition: background 0.3s, color 0.3s;
-        }
-
-        .glass-folder:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-        }
-
-        .folder-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Drifting watermarks for depth */
-        .watermark-drift {
-            position: fixed;
-            opacity: 0.1;
-            z-index: -2;
-            filter: blur(10px);
-        }
-    </style>
+    <title>SZMG Online - Főoldal</title>
+    <link rel="stylesheet" href="stilus.css">
 </head>
 <body>
+    <div class="hatter-animacio"></div>
 
-    <div class="liquid-glass-card">
-        <div class="logo-header">SZMG ONLINE</div>
-        <h1 class="bejelentkezes-title">Bejelentkezés</h1>
+    <div class="main-container">
         
-        <div class="input-group">
-            <span class="input-label">Email cím</span>
-            <input type="email" class="input-field" placeholder="Kérem adja meg...">
-        </div>
-
-        <div class="input-group">
-            <span class="input-label">Jelszó</span>
-            <input type="password" class="input-field" placeholder="Kérem adja meg...">
-        </div>
-
-        <button class="belépes-button">Belépés</button>
-        <div class="help-text">Nincs még fiókod? Regisztrálj!</div>
-    </div&gt;
-
-    <div class="app-drift-container">
-        <div class="folder-group">
-            <div class="glass-folder">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23b0b3b8' d='M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM3 10a7 7 0 1 1 14 0A7 7 0 0 1 3 10zm7-5a1 1 0 0 0-1 1v3H6a1 1 0 1 0 0 2h4a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z'/%3E%3C/svg%3E" class="folder-icon"&gt;
-                FIZIKA 9
+        <header class="fooldal-header">
+            <div class="logo-section">
+                <span class="brand-text">SZMG ONLINE</span>
             </div>
-            <div class="glass-folder">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23b0b3b8' d='M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM3 10a7 7 0 1 1 14 0A7 7 0 0 1 3 10zm7-5a1 1 0 0 0-1 1v3H6a1 1 0 1 0 0 2h4a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z'/%3E%3C/svg%3E" class="folder-icon"&gt;
-                FIZIKA 10
+            <div class="header-buttons">
+                <button class="btn-secondary">Admin</button>
+                <button class="btn-secondary">Profil</button>
+                <button onclick="location.href='index.html'" class="btn-logout">Kijelentkezés</button>
             </div>
-        </div>
+        </header>
 
-        <div class="folder-group">
-            <div class="glass-folder">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23b0b3b8' d='M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM3 10a7 7 0 1 1 14 0A7 7 0 0 1 3 10zm7-5a1 1 0 0 0-1 1v3H6a1 1 0 1 0 0 2h4a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z'/%3E%3C/svg%3E" class="folder-icon"&gt;
-                ÓRAREND
-            </div>
-        </div>
+        <main class="folder-selection">
+            <a href="#" class="folder-card">
+                <div class="folder-content">
+                    <span class="folder-icon">📂</span>
+                    <span class="folder-name">FIZIKA 9</span>
+                </div>
+            </a>
+
+            <a href="#" class="folder-card">
+                <div class="folder-content">
+                    <span class="folder-icon">📂</span>
+                    <span class="folder-name">FIZIKA 10</span>
+                </div>
+            </a>
+        </main>
+
     </div>
-
-    <div class="watermark-drift" style="top: 20%; left: 10%;"&gt;
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QgKBB8Z+wz6bAAAA+VJREFUaN7tmV1IU2EYx/9nZpZb5qZpZbplZpZbZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZmZpWllmZmlaWWZmaVpZZ
+</body>
+</html>
