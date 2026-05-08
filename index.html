@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>SZMG Online</title>
+    <title>SZMG Online - Belépés</title>
     <link rel="stylesheet" href="stilus.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -12,14 +12,8 @@
         <p class="brand-text">SZMG ONLINE</p>
         <h1>Bejelentkezés</h1>
         <form id="login-form">
-            <div class="input-csoport">
-                <label>Email cím</label>
-                <input type="email" id="email" placeholder="Kérem adja meg..." required>
-            </div>
-            <div class="input-csoport">
-                <label>Jelszó</label>
-                <input type="password" id="password" placeholder="Kérem adja meg..." required>
-            </div>
+            <input type="email" id="email" placeholder="Email cím" required>
+            <input type="password" id="password" placeholder="Jelszó" required>
             <button type="submit" class="btn-login">Belépés</button>
         </form>
     </div>
