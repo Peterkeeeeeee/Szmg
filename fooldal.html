@@ -18,8 +18,7 @@
 
     <main>
         <div id="folder-view" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
-            <p>Mappák betöltése...</p>
-        </div>
+            </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px;">
             <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:var(--dark-blue);">Vissza</button>
@@ -42,13 +41,12 @@
         }
         checkUser();
 
-        // Ez a függvény olvassa be a mappák listáját
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
             if (error) return console.error(error);
 
             const folderView = document.getElementById('folder-view');
-            // A képed alapján: 'megjelenített_nev' és 'tábla_neve' (kisbetű + ékezet!)
+            // JAVÍTÁS: Pontos ékezetes oszlopnevek használata a képed alapján
             folderView.innerHTML = mappak.map(m => `
                 <div class="floating-folder" onclick="openFolder('${m.tábla_neve}')">
                     <i class="fas fa-folder-open"></i>
@@ -61,11 +59,11 @@
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
             
-            // Itt a tableName lesz "Fizika 9" vagy "Fizika 10"
             const { data, error } = await sb.from(tableName).select('*');
             if (error) return console.error(error);
 
             const list = document.getElementById('file-list');
+            // Itt a Leírás és Fájl oszlopokat használjuk a Fizika 9/10 táblákból
             list.innerHTML = data.map(f => `
                 <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; max-width:none; text-align:left;">
                     <span><i class="fas fa-file-pdf"></i> ${f.Leírás}</span>
