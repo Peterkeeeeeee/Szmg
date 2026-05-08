@@ -8,37 +8,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS Fixek, hogy ne másszon el semmi */
         .folder-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
             margin: 40px auto;
         }
         .folder-box {
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 18px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.2s;
+            transition: 0.3s;
             color: white;
         }
-        .folder-box:hover { background: rgba(255, 255, 255, 0.2); }
-        .folder-box i { color: #f1c40f; margin-right: 15px; font-size: 1.4rem; }
-        .folder-box span { font-weight: bold; font-size: 1.1rem; }
+        .folder-box:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+        .folder-box i {
+            font-size: 1.5rem;
+            color: #f1c40f;
+            margin-right: 20px;
+        }
+        .folder-box span {
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
-    <header style="display: flex; align-items: center; justify-content: space-around; padding: 20px;">
-        <div class="logo" style="font-size: 2rem; font-weight: bold; color: white;">
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+        <div class="logo" style="font-size: 1.8rem; font-weight: bold; color: white;">
             SZMG <span style="color: #e67e22;">ONLINE</span>
         </div>
-        <button onclick="logout()" style="padding: 10px 20px; background: #e67e22; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Kilépés</button>
+        <button onclick="logout()" style="background: #e67e22; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Kilépés</button>
     </header>
 
     <main>
@@ -47,7 +55,9 @@
         </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px; margin: 0 auto;">
-            <button onclick="closeFolder()" style="margin-bottom:20px; padding: 10px 20px; cursor: pointer; background: #34495e; color: white; border: none; border-radius: 5px;">Vissza</button>
+            <button onclick="closeFolder()" style="margin-bottom: 20px; background: #34495e; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-arrow-left"></i> Vissza a mappákhoz
+            </button>
             <div id="file-list" style="display: grid; gap: 10px;"></div>
         </div>
     </main>
@@ -57,28 +67,26 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
+        // Mappák betöltése az ékezetmentes oszlopnevekkel
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
             
             if (error) {
-                console.error("Hiba történt:", error.message);
+                console.error("Hiba:", error.message);
                 return;
             }
 
             const folderView = document.getElementById('folder-view');
-            folderView.innerHTML = ''; // Töröljük a "Betöltés..." szöveget
+            folderView.innerHTML = '';
 
             mappak.forEach(m => {
-                // Itt a biztonsági hivatkozás: szögletes zárójel + pontos ékezetes név
-                const nev = m["megjelenített_nev"];
-                const tabla = m["tábla_neve"];
-
                 const div = document.createElement('div');
                 div.className = 'folder-box';
-                div.onclick = () => openFolder(tabla);
+                // Használjuk az új, ékezetmentes neveket!
+                div.onclick = () => openFolder(m.tabla_neve);
                 div.innerHTML = `
                     <i class="fas fa-folder-open"></i>
-                    <span>${nev}</span>
+                    <span>${m.megjelenitett_nev}</span>
                 `;
                 folderView.appendChild(div);
             });
@@ -88,6 +96,7 @@
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
             
+            // Lekérjük a konkrét tábla tartalmát (pl. Fizika 9)
             const { data, error } = await sb.from(tableName).select('*');
             if (error) return alert("Hiba a fájlok betöltésekor!");
 
@@ -95,7 +104,7 @@
             list.innerHTML = data.map(f => `
                 <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; color: white;">
                     <span><i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 10px;"></i> ${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" style="background: #3498db; color: white; padding: 5px 15px; text-decoration: none; border-radius: 5px; font-size: 0.9rem;">Megnyitás</a>
+                    <a href="${f.Fájl}" target="_blank" style="background: #3498db; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold;">Megnyitás</a>
                 </div>
             `).join('');
         }
@@ -110,7 +119,6 @@
             window.location.replace("index.html");
         }
 
-        // Indítás
         loadFolders();
     </script>
 </body>
