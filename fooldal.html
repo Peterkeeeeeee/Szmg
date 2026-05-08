@@ -12,16 +12,17 @@
     <header>
         <div class="logo">SZMG <span>ONLINE</span></div>
         <div class="nav-icons">
-            <button onclick="logout()" style="width:auto; padding:8px 15px; background:var(--orange);">Kilépés</button>
+            <button onclick="logout()" style="width:auto; padding:8px 15px; background:var(--orange); color:white; border:none; border-radius:5px; cursor:pointer;">Kilépés</button>
         </div>
     </header>
 
     <main>
-        <div id="folder-view" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
-            </div>
+        <div id="folder-view" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center; padding:20px;">
+            <p>Mappák betöltése...</p>
+        </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px;">
-            <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:var(--dark-blue);">Vissza</button>
+            <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:var(--dark-blue); color:white; padding:10px 20px; border:none; cursor:pointer; border-radius:5px;">Vissza</button>
             <div id="file-list" style="display:grid; gap:10px;"></div>
         </div>
     </main>
@@ -46,9 +47,10 @@
             if (error) return console.error(error);
 
             const folderView = document.getElementById('folder-view');
-            // JAVÍTÁS: Pontos ékezetes oszlopnevek használata a képed alapján
+            
+            // Itt a javítás: ékezetes neveket használunk (megjelenített_nev, tábla_neve)
             folderView.innerHTML = mappak.map(m => `
-                <div class="floating-folder" onclick="openFolder('${m.tábla_neve}')">
+                <div class="floating-folder" onclick="openFolder('${m.tábla_neve}')" style="cursor:pointer;">
                     <i class="fas fa-folder-open"></i>
                     <span style="font-weight:700;">${m.megjelenített_nev}</span>
                 </div>
@@ -63,11 +65,10 @@
             if (error) return console.error(error);
 
             const list = document.getElementById('file-list');
-            // Itt a Leírás és Fájl oszlopokat használjuk a Fizika 9/10 táblákból
             list.innerHTML = data.map(f => `
-                <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; max-width:none; text-align:left;">
+                <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; max-width:none; text-align:left; border: 1px solid rgba(255,255,255,0.1); border-radius:10px; margin-bottom:10px;">
                     <span><i class="fas fa-file-pdf"></i> ${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" class="btn" style="width:auto; padding:5px 15px; text-decoration:none;">Megnyitás</a>
+                    <a href="${f.Fájl}" target="_blank" class="btn" style="width:auto; padding:5px 15px; text-decoration:none; background:#3498db; color:white; border-radius:5px;">Megnyitás</a>
                 </div>
             `).join('');
         }
