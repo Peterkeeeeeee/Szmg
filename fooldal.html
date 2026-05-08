@@ -12,20 +12,18 @@
     <header>
         <div class="logo">SZMG <span>ONLINE</span></div>
         <div class="nav-icons">
-            <button onclick="logout()" style="width:auto; padding:8px 15px; background:var(--orange);">Kilépés</button>
+            <button onclick="logout()" style="width:auto; padding:8px 15px; background:var(--orange); color:white; border:none; border-radius:5px; cursor:pointer;">Kilépés</button>
         </div>
     </header>
 
     <main>
-        <div id="folder-view">
-            <div class="floating-folder" onclick="openFolder()">
-                <i class="fas fa-folder-open"></i>
-                <span style="font-weight:700;">Fizika 9.</span>
-            </div>
+        <div id="folder-view" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
+            <p>Mappák betöltése...</p>
         </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px;">
-            <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:var(--dark-blue);">Vissza</button>
+            <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:var(--dark-blue); color:white; padding:10px 20px; border:none; cursor:pointer;">Vissza</button>
+            <h2 id="current-folder-name" style="margin-bottom:15px;"></h2>
             <div id="file-list" style="display:grid; gap:10px;"></div>
         </div>
     </main>
@@ -35,24 +33,60 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // AUTH GUARD: Kidob, ha nem vagy belépve
+        // AUTH GUARD
         async function checkUser() {
             const { data: { session } } = await sb.auth.getSession();
             if (!session) {
                 window.location.replace("index.html");
+            } else {
+                loadFolders(); // Ha be van lépve, jöhetnek a mappák
             }
         }
         checkUser();
 
-        async function openFolder() {
+        // 1. MAPPÁK BETÖLTÉSE A 'mappak' TÁBLÁBÓL
+        async function loadFolders() {
+            const { data: mappak, error } = await sb.from('mappak').select('*');
+            
+            if (error) {
+                console.error("Hiba a mappák betöltésekor:", error);
+                return;
+            }
+
+            const folderView = document.getElementById('folder-view');
+            // A te tábládban 'Megjelenitett_nev' és 'Tabla_neve' van!
+            folderView.innerHTML = mappak.map(m => `
+                <div class="floating-folder" onclick="openFolder('${m.Tabla_neve}', '${m.Megjelenitett_nev}')" style="cursor:pointer; text-align:center;">
+                    <i class="fas fa-folder-open" style="font-size:3rem; color:#f39c12;"></i><br>
+                    <span style="font-weight:700;">${m.Megjelenitett_nev}</span>
+                </div>
+            `).join('');
+        }
+
+        // 2. ADOTT MAPPA TARTALMÁNAK MEGNYITÁSA
+        async function openFolder(tableName, displayName) {
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
-            const { data } = await sb.from('Fizika 9').select('*');
+            document.getElementById('current-folder-name').innerText = displayName;
+
+            const { data, error } = await sb.from(tableName).select('*');
+            
+            if (error) {
+                console.error("Hiba a fájlok betöltésekor:", error);
+                return;
+            }
+
             const list = document.getElementById('file-list');
+            if (data.length === 0) {
+                list.innerHTML = "<p>Ez a mappa még üres.</p>";
+                return;
+            }
+
+            // A te tábládban 'Leírás' és 'Fájl' oszlopok vannak!
             list.innerHTML = data.map(f => `
-                <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; max-width:none; text-align:left;">
-                    <span><i class="fas fa-file-pdf"></i> ${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" class="btn" style="width:auto; padding:5px 15px; text-decoration:none;">Megnyitás</a>
+                <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; border:1px solid #ddd; border-radius:8px; margin-bottom:10px;">
+                    <span><i class="fas fa-file-pdf" style="color:#e74c3c;"></i> ${f.Leírás}</span>
+                    <a href="${f.Fájl}" target="_blank" class="btn" style="background:#3498db; color:white; padding:5px 15px; text-decoration:none; border-radius:4px;">Megnyitás</a>
                 </div>
             `).join('');
         }
