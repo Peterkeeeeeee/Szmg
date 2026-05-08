@@ -2,55 +2,34 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SZMG Online - Főoldal</title>
     <link rel="stylesheet" href="stilus.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    <div class="fooldal-kontener">
+    <div class="glass-card" style="width: 450px;">
         <p class="brand-text">SZMG ONLINE</p>
         <div id="mappa-lista" class="mappa-lista">
             </div>
-        <button onclick="kijelentkezes()" class="btn-login" style="margin-top:20px; background: rgba(255,0,0,0.2);">Kijelentkezés</button>
     </div>
 
     <script>
-        const supabaseUrl = 'https://hiiakcswjoynxyppwczu.supabase.co';
-        const supabaseKey = 'A_TE_ANON_KEY_ED';
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'IDE_AZ_ANON_KEYT');
 
         async function betoltes() {
-            // 1. Munkamenet ellenőrzése
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) { window.location.href = 'index.html'; return; }
-
-            // 2. Mappák lekérése a 'mappak' táblából (amit létrehoztál)
-            const { data: mappak, error } = await supabaseClient
-                .from('mappak')
-                .select('megjelenitett_nev, tabla_neve');
-
-            if (error) {
-                console.error(error);
-                return;
-            }
+            const { data: mappak, error } = await supabase.from('mappak').select('*');
+            if (error) return;
 
             const lista = document.getElementById('mappa-lista');
             mappak.forEach(m => {
                 const item = document.createElement('a');
                 item.href = `tananyag.html?tabla=${m.tabla_neve}`;
                 item.className = 'mappa-elem';
-                item.innerHTML = `<span class="mappa-ikon">📂</span> <span class="mappa-nev">${m.megjelenitett_nev}</span>`;
+                item.innerHTML = `<span class="mappa-ikon">📂</span> <span>${m.megjelenitett_nev}</span>`;
                 lista.appendChild(item);
             });
         }
-
-        async function kijelentkezes() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'index.html';
-        }
-
         betoltes();
     </script>
 </body>
