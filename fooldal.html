@@ -8,34 +8,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* CSS Fixek, hogy ne másszon el semmi */
         .folder-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            max-width: 300px;
-            margin: 20px auto;
+            max-width: 350px;
+            margin: 40px auto;
         }
         .folder-box {
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 18px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: 0.2s;
             color: white;
-            text-decoration: none;
         }
         .folder-box:hover { background: rgba(255, 255, 255, 0.2); }
-        .folder-box i { color: #f1c40f; margin-right: 15px; font-size: 1.2rem; }
+        .folder-box i { color: #f1c40f; margin-right: 15px; font-size: 1.4rem; }
+        .folder-box span { font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <header style="display: flex; align-items: center; justify-content: space-around; padding: 20px;">
-        <div class="logo" style="font-size: 2rem; font-weight: bold;">SZMG <span style="color: #e67e22;">ONLINE</span></div>
-        <button onclick="logout()" style="padding: 10px 20px; background: #e67e22; border: none; color: white; border-radius: 5px; cursor: pointer;">Kilépés</button>
+        <div class="logo" style="font-size: 2rem; font-weight: bold; color: white;">
+            SZMG <span style="color: #e67e22;">ONLINE</span>
+        </div>
+        <button onclick="logout()" style="padding: 10px 20px; background: #e67e22; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Kilépés</button>
     </header>
 
     <main>
@@ -44,8 +47,8 @@
         </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px; margin: 0 auto;">
-            <button onclick="closeFolder()" style="margin-bottom:20px; padding: 10px; cursor: pointer;">Vissza</button>
-            <div id="file-list"></div>
+            <button onclick="closeFolder()" style="margin-bottom:20px; padding: 10px 20px; cursor: pointer; background: #34495e; color: white; border: none; border-radius: 5px;">Vissza</button>
+            <div id="file-list" style="display: grid; gap: 10px;"></div>
         </div>
     </main>
 
@@ -56,17 +59,29 @@
 
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
-            if (error) return console.error(error);
+            
+            if (error) {
+                console.error("Hiba történt:", error.message);
+                return;
+            }
 
             const folderView = document.getElementById('folder-view');
-            
-            // A TRÜKK: Szögletes zárójelet használunk az ékezetes nevekhez!
-            folderView.innerHTML = mappak.map(m => `
-                <div class="folder-box" onclick="openFolder('${m["tábla_neve"]}')">
+            folderView.innerHTML = ''; // Töröljük a "Betöltés..." szöveget
+
+            mappak.forEach(m => {
+                // Itt a biztonsági hivatkozás: szögletes zárójel + pontos ékezetes név
+                const nev = m["megjelenített_nev"];
+                const tabla = m["tábla_neve"];
+
+                const div = document.createElement('div');
+                div.className = 'folder-box';
+                div.onclick = () => openFolder(tabla);
+                div.innerHTML = `
                     <i class="fas fa-folder-open"></i>
-                    <span>${m["megjelenített_nev"]}</span>
-                </div>
-            `).join('');
+                    <span>${nev}</span>
+                `;
+                folderView.appendChild(div);
+            });
         }
 
         async function openFolder(tableName) {
@@ -74,13 +89,13 @@
             document.getElementById('file-view').style.display = 'block';
             
             const { data, error } = await sb.from(tableName).select('*');
-            if (error) return alert("Hiba a tábla beolvasásakor!");
+            if (error) return alert("Hiba a fájlok betöltésekor!");
 
             const list = document.getElementById('file-list');
             list.innerHTML = data.map(f => `
-                <div style="background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; border-radius: 8px; color: white;">
-                    <span>${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" style="color: #3498db;">Megnyitás</a>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; color: white;">
+                    <span><i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 10px;"></i> ${f.Leírás}</span>
+                    <a href="${f.Fájl}" target="_blank" style="background: #3498db; color: white; padding: 5px 15px; text-decoration: none; border-radius: 5px; font-size: 0.9rem;">Megnyitás</a>
                 </div>
             `).join('');
         }
@@ -95,6 +110,7 @@
             window.location.replace("index.html");
         }
 
+        // Indítás
         loadFolders();
     </script>
 </body>
