@@ -20,16 +20,17 @@
                 <input type="email" id="login-email" placeholder="Email cím">
                 <input type="password" id="login-password" placeholder="Jelszó">
                 <button onclick="handleLogin()">Belépés</button>
-                <p onclick="toggleAuth(false)" style="cursor:pointer; color:var(--orange); font-weight:700;">Nincs még fiókod? Regisztrálj!</p>
+                <p onclick="toggleAuth(false)" style="cursor:pointer; color:var(--orange); font-weight:700; margin-top:15px;">Nincs még fiókod? Regisztrálj!</p>
             </div>
 
             <div id="register-view" style="display:none;">
                 <h2>Regisztráció</h2>
                 <input type="email" id="reg-email" placeholder="Email cím">
                 <input type="password" id="reg-password" placeholder="Jelszó">
+                <label style="display:block; text-align:left; margin-bottom:5px; font-weight:700;">Osztályod:</label>
                 <select id="reg-class"></select>
                 <button onclick="handleRegister()">Regisztráció indítása</button>
-                <p onclick="toggleAuth(true)" style="cursor:pointer; color:var(--dark-blue); font-weight:700;">Már van fiókod? Lépj be!</p>
+                <p onclick="toggleAuth(true)" style="cursor:pointer; color:var(--dark-blue); font-weight:700; margin-top:15px;">Már van fiókod? Lépj be!</p>
             </div>
         </div>
     </div>
@@ -72,6 +73,13 @@
             if (error) alert(error.message);
             else window.location.href = "siker.html";
         }
+
+        async function checkSession() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) window.location.href = "fooldal.html";
+        }
+
+        checkSession();
         loadClasses();
     </script>
 </body>
