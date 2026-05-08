@@ -8,10 +8,10 @@
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    <div class="glass-card" style="width: 450px;">
+    <div class="glass-card">
         <p class="brand-text">SZMG ONLINE</p>
         <div id="mappa-lista" class="mappa-lista">
-            <p id="statusz">Adatok ellenőrzése...</p>
+            <p>Betöltés...</p>
         </div>
     </div>
 
@@ -19,8 +19,9 @@
         const _supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg');
 
         async function betoltes() {
-            // Lekérjük a mappákat
+            // Lekérjük az összes sort a 'mappak' táblából
             const { data: mappak, error } = await _supabase.from('mappak').select('*');
+            
             const listaDiv = document.getElementById('mappa-lista');
 
             if (error) {
@@ -29,17 +30,23 @@
             }
 
             if (!mappak || mappak.length === 0) {
-                listaDiv.innerHTML = `<p>A 'mappak' tábla üres a Supabase-ben! Adj hozzá sorokat.</p>`;
+                listaDiv.innerHTML = `<p>Nincsenek mappák az adatbázisban.</p>`;
                 return;
             }
 
             listaDiv.innerHTML = ''; 
             mappak.forEach(m => {
                 const a = document.createElement('a');
-                // Itt figyelünk a táblanévre
-                a.href = `tananyag.html?tabla=${encodeURIComponent(m.tabla_neve)}`;
+                // Itt használjuk a képeden látható pontos oszlopneveket
+                const megjelenitettNev = m.megjelenitett_nev; 
+                const tablaNeve = m.tabla_neve;
+
+                a.href = `tananyag.html?tabla=${encodeURIComponent(tablaNeve)}`;
                 a.className = 'mappa-elem';
-                a.innerHTML = `<span class="mappa-ikon">📂</span> <span>${m.megjelenitett_nev}</span>`;
+                a.innerHTML = `
+                    <span class="mappa-ikon">📂</span> 
+                    <span>${megjelenitettNev}</span>
+                `;
                 listaDiv.appendChild(a);
             });
         }
