@@ -6,52 +6,44 @@
     --border: #e2e8f0;
     --text: #1e293b;
     --card-bg: #ffffff;
-    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+/* Rendszer szintű sötét mód felismerése */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #0f172a;
+        --gray: #1e293b;
+        --border: #334155;
+        --text: #f1f5f9;
+        --card-bg: #1e293b;
+    }
+}
+
+/* Kézi sötét mód felülbírálás (ha a JS-ből váltasz) */
 body.dark-mode {
     --white: #0f172a;
     --gray: #1e293b;
     --border: #334155;
     --text: #f1f5f9;
     --card-bg: #1e293b;
-    --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: var(--white);
     color: var(--text);
     margin: 0;
-    transition: background-color 0.3s, color 0.3s;
-    line-height: 1.5;
-}
-
-/* --- HEADER & NAVIGATION --- */
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    background: var(--white);
-    border-bottom: 2px solid var(--gray);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.logo { font-size: 1.5rem; font-weight: 800; color: var(--dark-blue); }
-.logo span { color: var(--orange); }
-
-.nav-icons { display: flex; gap: 15px; align-items: center; }
-
-/* --- KÁRTYÁK & KOCKÁK --- */
-main {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Bejelentkezés középre helyezése */
+.auth-container {
+    flex: 1;
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: calc(100vh - 80px);
     padding: 20px;
 }
 
@@ -59,104 +51,35 @@ main {
     background: var(--card-bg);
     padding: 2.5rem;
     border-radius: 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     border: 1px solid var(--border);
     width: 100%;
     max-width: 400px;
     text-align: center;
 }
 
-.floating-folder {
-    background: var(--card-bg);
-    width: 220px;
-    height: 220px;
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+.logo { font-size: 24px; font-weight: 800; color: var(--dark-blue); margin-bottom: 20px; }
+.logo span { color: var(--orange); }
 
-.floating-folder:hover {
-    transform: translateY(-10px) scale(1.03);
-    border-color: var(--orange);
-}
-
-.floating-folder i { font-size: 5rem; color: var(--orange); margin-bottom: 1rem; }
-
-/* --- FORM ELEMEK --- */
 input {
     width: 100%;
-    padding: 12px 16px;
-    margin: 8px 0 20px 0;
+    padding: 12px;
+    margin: 10px 0;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--gray);
     color: var(--text);
     box-sizing: border-box;
-    font-size: 1rem;
 }
 
-button, .btn {
+button {
     width: 100%;
     padding: 12px;
-    background-color: var(--dark-blue);
+    background-color: var(--orange);
     color: white;
     border: none;
     border-radius: 10px;
-    font-weight: 700;
+    font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
-    text-decoration: none;
-    display: block;
-}
-
-button:hover { background-color: var(--orange); }
-
-/* --- SIDEBAR --- */
-#sidebar {
-    position: fixed;
-    left: -280px;
-    top: 0;
-    width: 280px;
-    height: 100%;
-    background: var(--white);
-    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
-    transition: 0.3s;
-    z-index: 200;
-}
-
-#sidebar.active { left: 0; }
-
-.sidebar-item {
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    text-decoration: none;
-    color: var(--text);
-    border-bottom: 1px solid var(--gray);
-}
-
-/* --- TÁBLÁZATOK (Adminhoz) --- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: var(--card-bg);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-th { background: var(--gray); color: var(--dark-blue); }
-
-/* --- MOBIL --- */
-@media (max-width: 600px) {
-    header { padding: 1rem; }
-    .card { padding: 1.5rem; }
+    margin-top: 10px;
 }
