@@ -1,108 +1,45 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SZMG Online - Főoldal</title>
-    <link rel="stylesheet" href="stilus.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .folder-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            max-width: 400px;
-            margin: 40px auto;
-        }
-        .folder-box {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-            color: white;
-        }
-        .folder-box:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.02);
-        }
-        .folder-box i {
-            font-size: 1.5rem;
-            color: #f1c40f;
-            margin-right: 20px;
-        }
-        .folder-box span {
-            font-weight: 700;
-        }
-
-        /* --- ÚJ: MODAL STÍLUSOK --- */
-        #preview-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            flex-direction: column;
-        }
-        .modal-header {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            background: #2c3e50;
-            color: white;
-        }
-        .modal-body {
-            flex-grow: 1;
-            width: 100%;
-            border: none;
-        }
-        .close-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-    </style>
-</head>
 <body>
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
-        <div class="logo" style="font-size: 1.8rem; font-weight: bold; color: white;">
-            SZMG <span style="color: #e67e22;">ONLINE</span>
+    <header class="top-nav">
+        <div class="nav-left">
+            <button id="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="logo">SZMG <span>ONLINE</span></div>
         </div>
-        <button onclick="logout()" style="background: #e67e22; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Kilépés</button>
+        <button class="logout-btn" onclick="logout()">Kilépés</button>
     </header>
 
-    <main>
-        <div id="folder-view" class="folder-container">
-            <p style="color: white; text-align: center;">Betöltés...</p>
-        </div>
+    <div class="app-container">
+        <nav id="sidebar" class="sidebar">
+            <div class="menu-section">
+                <h3>Témakörök</h3>
+                <div id="folder-list" class="folder-tree">
+                    </div>
+            </div>
 
-        <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px; margin: 0 auto;">
-            <button onclick="closeFolder()" style="margin-bottom: 20px; background: #34495e; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                <i class="fas fa-arrow-left"></i> Vissza a mappákhoz
-            </button>
-            <div id="file-list" style="display: grid; gap: 10px;"></div>
-        </div>
-    </main>
+            <div class="sidebar-footer">
+                <a href="admin.html"><i class="fas fa-user-shield"></i> Admin oldal</a>
+                <a href="profil.html"><i class="fas fa-user-circle"></i> Profil</a>
+            </div>
+        </nav>
 
-    <!-- ÚJ: BEÁGYAZOTT NÉZET (MODAL) HTML -->
-    <div id="preview-modal">
-        <div class="modal-header">
-            <span id="modal-title">Fájl megtekintése</span>
-            <button class="close-btn" onclick="closePreview()">Bezárás</button>
-        </div>
-        <iframe id="preview-frame" class="modal-body" src=""></iframe>
+        <main class="content-area">
+            <div id="welcome-message" class="empty-state">
+                <i class="fas fa-arrow-left"></i>
+                <h2>Válassz egy témakört a bal oldali menüből!</h2>
+            </div>
+            
+            <div id="file-display" style="display: none;">
+                <h2 id="current-folder-name"></h2>
+                <div id="file-list" class="file-grid"></div>
+            </div>
+
+            <div id="preview-container" class="preview-overlay" style="display: none;">
+                <div class="preview-header">
+                    <span id="preview-title">Dokumentum</span>
+                    <button onclick="closePreview()">Bezárás</button>
+                </div>
+                <iframe id="preview-frame" src=""></iframe>
+            </div>
+        </main>
     </div>
 
     <script>
@@ -114,69 +51,54 @@
             const { data: mappak, error } = await sb.from('mappak').select('*');
             if (error) return;
 
-            const folderView = document.getElementById('folder-view');
-            folderView.innerHTML = '';
+            const folderList = document.getElementById('folder-list');
+            folderList.innerHTML = '';
 
             mappak.forEach(m => {
                 const div = document.createElement('div');
-                div.className = 'folder-box';
-                div.onclick = () => openFolder(m.tabla_neve);
-                div.innerHTML = `
-                    <i class="fas fa-folder-open"></i>
-                    <span>${m.megjelenitett_nev}</span>
-                `;
-                folderView.appendChild(div);
+                div.className = 'tree-item';
+                div.onclick = () => openFolder(m.tabla_neve, m.megjelenitett_nev);
+                div.innerHTML = `<i class="fas fa-folder"></i> <span>${m.megjelenitett_nev}</span>`;
+                folderList.appendChild(div);
             });
         }
 
-        async function openFolder(tableName) {
-            document.getElementById('folder-view').style.display = 'none';
-            document.getElementById('file-view').style.display = 'block';
+        async function openFolder(tableName, displayName) {
+            document.getElementById('welcome-message').style.display = 'none';
+            document.getElementById('file-display').style.display = 'block';
+            document.getElementById('current-folder-name').innerText = displayName;
             
             const { data, error } = await sb.from(tableName).select('*');
-            if (error) return alert("Hiba a fájlok betöltésekor!");
+            if (error) return;
 
             const list = document.getElementById('file-list');
-            // MÓDOSÍTVA: Az <a> tag helyett gombot használunk, ami meghívja a preview-t
             list.innerHTML = data.map(f => `
-                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; color: white;">
-                    <span><i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 10px;"></i> ${f.Leírás}</span>
-                    <button onclick="openPreview('${f.Fájl}', '${f.Leírás}')" style="background: #3498db; border:none; color: white; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor:pointer;">Megnyitás</button>
+                <div class="file-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <div class="file-info">
+                        <strong>${f.Leírás}</strong>
+                    </div>
+                    <button onclick="openPreview('${f.Fájl}', '${f.Leírás}')">Megnyitás</button>
                 </div>
             `).join('');
         }
 
-        // ÚJ FUNKCIÓK A MEGNYITÁSHOZ ÉS BEZÁRÁSHOZ
         function openPreview(url, title) {
-            const modal = document.getElementById('preview-modal');
-            const iframe = document.getElementById('preview-frame');
-            document.getElementById('modal-title').innerText = title;
-            
-            iframe.src = url;
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Ne görögjön a háttér
+            const preview = document.getElementById('preview-container');
+            document.getElementById('preview-frame').src = url;
+            document.getElementById('preview-title').innerText = title;
+            preview.style.display = 'flex';
         }
 
         function closePreview() {
-            const modal = document.getElementById('preview-modal');
-            const iframe = document.getElementById('preview-frame');
-            
-            iframe.src = ""; // Leállítjuk a tartalom betöltését
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            document.getElementById('preview-container').style.display = 'none';
+            document.getElementById('preview-frame').src = '';
         }
 
-        function closeFolder() {
-            document.getElementById('file-view').style.display = 'none';
-            document.getElementById('folder-view').style.display = 'flex';
-        }
-
-        async function logout() {
-            await sb.auth.signOut();
-            window.location.replace("index.html");
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
         }
 
         loadFolders();
     </script>
 </body>
-</html>
