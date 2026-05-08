@@ -12,30 +12,29 @@
         <p class="brand-text">SZMG ONLINE</p>
         <h1>Bejelentkezés</h1>
         <form id="login-form">
-            <input type="email" id="email" placeholder="Email" required style="margin-bottom:10px; width:100%; padding:10px; background:rgba(255,255,255,0.1); border:none; color:white;">
-            <input type="password" id="password" placeholder="Jelszó" required style="margin-bottom:10px; width:100%; padding:10px; background:rgba(255,255,255,0.1); border:none; color:white;">
-            <button type="submit" class="btn-login" style="width:100%; padding:10px; background:linear-gradient(90deg, #a0d8f1, #f190b7); border:none; color:white; cursor:pointer;">Belépés</button>
+            <div class="input-csoport">
+                <label>Email cím</label>
+                <input type="email" id="email" placeholder="Kérem adja meg..." required>
+            </div>
+            <div class="input-csoport">
+                <label>Jelszó</label>
+                <input type="password" id="password" placeholder="Kérem adja meg..." required>
+            </div>
+            <button type="submit" class="btn-login">Belépés</button>
         </form>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://hiiakcswjoynxyppwczu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const _supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg');
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const { data, error } = await _supabase.auth.signInWithPassword({
+            const { error } = await _supabase.auth.signInWithPassword({
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value
             });
-
-            if (error) {
-                alert("Hiba: " + error.message);
-            } else {
-                console.log("Sikeres belépés:", data);
-                window.location.href = 'fooldal.html';
-            }
+            if (error) alert("Hiba: " + error.message);
+            else window.location.href = 'fooldal.html';
         });
     </script>
 </body>
