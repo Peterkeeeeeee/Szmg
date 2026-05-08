@@ -2,115 +2,60 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SZMG Online</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="stilus.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body id="body">
+<body>
+    <header>
+        <div class="logo">SZMG <span>ONLINE</span></div>
+        <div class="nav-icons">
+            <button onclick="logout()" style="width:auto; padding:5px 10px;">Kilépés</button>
+        </div>
+    </header>
 
-<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-<div id="sidebar">
-    <a href="#" class="sidebar-item" onclick="toggleSidebar()"><i class="fas fa-home"></i> Kezdőlap</a>
-    <a href="admin.html" class="sidebar-item"><i class="fas fa-user-shield"></i> Admin felület</a>
-    <a href="#" class="sidebar-item" onclick="alert('Email: info@szmg.hu\nTel: +36 1 234 5678')"><i class="fas fa-envelope"></i> Elérhetőségek</a>
-    <a href="#" class="sidebar-item" onclick="logout()" style="color: #f43f5e; margin-top: 20px;"><i class="fas fa-sign-out-alt"></i> Kijelentkezés</a>
-</div>
-
-<header>
-    <div class="header-left">
-        <i class="fas fa-bars" onclick="toggleSidebar()"></i>
-    </div>
-    <div class="logo">SZMG <span>ONLINE</span></div>
-    <div class="header-right">
-        <div class="profile-btn" id="user-initial" onclick="toggleProfileMenu()">?
-            <div class="profile-menu" id="p-menu">
-                <button onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Sötét mód</button>
-                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Kilépés</button>
+    <main>
+        <div id="folder-view">
+            <div class="floating-folder" onclick="openFolder()">
+                <i class="fas fa-folder-open"></i>
+                <span>Fizika 9.</span>
             </div>
         </div>
-    </div>
-</header>
 
-<main>
-    <div id="folder-view">
-        <div class="floating-folder" onclick="openFolder()">
-            <i class="fas fa-folder-open"></i>
-            <span>Fizika 9.</span>
+        <div id="file-view" style="display:none; width:100%; max-width:600px;">
+            <button onclick="closeFolder()" class="btn" style="margin-bottom:20px; background:var(--orange);">Vissza</button>
+            <div id="file-list"></div>
         </div>
-    </div>
+    </main>
 
-    <div id="file-view">
-        <button onclick="closeFolder()" style="background:none; border:none; color:var(--orange); cursor:pointer; margin-bottom:15px; font-weight:bold;">
-            <i class="fas fa-arrow-left"></i> Vissza
-        </button>
-        <div id="file-container"></div>
-    </div>
-</main>
+    <script>
+        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+        const sb = supabase.createClient(SB_URL, SB_KEY);
 
-<script>
-    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
-    const sb = supabase.createClient(SB_URL, SB_KEY);
+        async function openFolder() {
+            document.getElementById('folder-view').style.display = 'none';
+            document.getElementById('file-view').style.display = 'block';
+            const { data } = await sb.from('Fizika 9').select('*');
+            const list = document.getElementById('file-list');
+            list.innerHTML = data.map(f => `
+                <a href="${f.Fájl}" target="_blank" class="card" style="display:flex; justify-content:space-between; margin-bottom:10px; padding:15px; text-decoration:none; color:var(--text);">
+                    <span>${f.Leírás}</span><i class="fas fa-external-link-alt"></i>
+                </a>
+            `).join('');
+        }
 
-    // Sötét mód kezelése
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkTheme', isDark);
-    }
+        function closeFolder() {
+            document.getElementById('file-view').style.display = 'none';
+            document.getElementById('folder-view').style.display = 'block';
+        }
 
-    if (localStorage.getItem('darkTheme') === 'true') {
-        document.body.classList.add('dark-mode');
-    }
-
-    // Menük vezérlése
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('active');
-        const overlay = document.getElementById('overlay');
-        overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function toggleProfileMenu() {
-        const menu = document.getElementById('p-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    async function init() {
-        const { data: { user } } = await sb.auth.getUser();
-        if (!user) { window.location.href = "index.html"; return; }
-        document.getElementById('user-initial').childNodes[0].nodeValue = user.email[0].toUpperCase();
-    }
-
-    async function openFolder() {
-        document.getElementById('folder-view').style.display = 'none';
-        document.getElementById('file-view').style.display = 'block';
-        const container = document.getElementById('file-container');
-        container.innerHTML = "<p>Betöltés...</p>";
-        const { data } = await sb.from('Fizika 9').select('*');
-        container.innerHTML = "";
-        data.forEach(file => {
-            const a = document.createElement('a');
-            a.className = 'file-item';
-            a.href = file.Fájl; a.target = "_blank";
-            a.innerHTML = `<span>${file.Leírás}</span><i class="fas fa-chevron-right"></i>`;
-            container.appendChild(a);
-        });
-    }
-
-    function closeFolder() {
-        document.getElementById('file-view').style.display = 'none';
-        document.getElementById('folder-view').style.display = 'block';
-    }
-
-    async function logout() {
-        await sb.auth.signOut();
-        window.location.href = "index.html";
-    }
-
-    init();
-</script>
+        async function logout() {
+            await sb.auth.signOut();
+            window.location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
