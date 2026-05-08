@@ -8,59 +8,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Biztosítjuk, hogy a mappák jól nézzenek ki */
         .folder-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            max-width: 400px;
-            margin: 40px auto;
+            max-width: 300px;
+            margin: 20px auto;
         }
         .folder-box {
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-        }
-        .folder-box:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-        .folder-box i {
-            font-size: 1.5rem;
-            color: #f1c40f;
-            margin-right: 20px;
-        }
-        .folder-box span {
-            font-weight: 700;
-            font-size: 1.1rem;
+            transition: 0.2s;
             color: white;
+            text-decoration: none;
         }
+        .folder-box:hover { background: rgba(255, 255, 255, 0.2); }
+        .folder-box i { color: #f1c40f; margin-right: 15px; font-size: 1.2rem; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">SZMG <span>ONLINE</span></div>
-        <div class="nav-icons">
-            <button onclick="logout()" style="width:auto; padding:8px 15px; background:#e67e22; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Kilépés</button>
-        </div>
+    <header style="display: flex; align-items: center; justify-content: space-around; padding: 20px;">
+        <div class="logo" style="font-size: 2rem; font-weight: bold;">SZMG <span style="color: #e67e22;">ONLINE</span></div>
+        <button onclick="logout()" style="padding: 10px 20px; background: #e67e22; border: none; color: white; border-radius: 5px; cursor: pointer;">Kilépés</button>
     </header>
 
     <main>
         <div id="folder-view" class="folder-container">
-            <p style="text-align:center;">Mappák betöltése...</p>
+            <p style="color: white; text-align: center;">Betöltés...</p>
         </div>
 
         <div id="file-view" style="display:none; width:100%; max-width:800px; padding:20px; margin: 0 auto;">
-            <button onclick="closeFolder()" class="btn" style="width:auto; margin-bottom:20px; background:#34495e; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">
-                <i class="fas fa-arrow-left"></i> Vissza
-            </button>
-            <div id="file-list" style="display:grid; gap:12px;"></div>
+            <button onclick="closeFolder()" style="margin-bottom:20px; padding: 10px; cursor: pointer;">Vissza</button>
+            <div id="file-list"></div>
         </div>
     </main>
 
@@ -69,30 +54,17 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        async function checkUser() {
-            const { data: { session } } = await sb.auth.getSession();
-            if (!session) {
-                window.location.replace("index.html");
-            } else {
-                loadFolders();
-            }
-        }
-        checkUser();
-
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
-            if (error) {
-                console.error("Hiba:", error);
-                return;
-            }
+            if (error) return console.error(error);
 
             const folderView = document.getElementById('folder-view');
             
-            // FIGYELJ: Pontosan az ékezetes neveket használjuk a képed alapján!
+            // A TRÜKK: Szögletes zárójelet használunk az ékezetes nevekhez!
             folderView.innerHTML = mappak.map(m => `
-                <div class="folder-box" onclick="openFolder('${m.tábla_neve}')">
+                <div class="folder-box" onclick="openFolder('${m["tábla_neve"]}')">
                     <i class="fas fa-folder-open"></i>
-                    <span>${m.megjelenített_nev}</span>
+                    <span>${m["megjelenített_nev"]}</span>
                 </div>
             `).join('');
         }
@@ -102,16 +74,13 @@
             document.getElementById('file-view').style.display = 'block';
             
             const { data, error } = await sb.from(tableName).select('*');
-            if (error) {
-                console.error("Hiba a tábla betöltésekor:", error);
-                return;
-            }
+            if (error) return alert("Hiba a tábla beolvasásakor!");
 
             const list = document.getElementById('file-list');
             list.innerHTML = data.map(f => `
-                <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-                    <span style="color:white;"><i class="fas fa-file-pdf" style="color:#e74c3c; margin-right:10px;"></i> ${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" class="btn" style="width:auto; padding:8px 20px; text-decoration:none; background:#3498db; color:white; border-radius:5px; font-weight:bold;">Megnyitás</a>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; border-radius: 8px; color: white;">
+                    <span>${f.Leírás}</span>
+                    <a href="${f.Fájl}" target="_blank" style="color: #3498db;">Megnyitás</a>
                 </div>
             `).join('');
         }
@@ -125,6 +94,8 @@
             await sb.auth.signOut();
             window.location.replace("index.html");
         }
+
+        loadFolders();
     </script>
 </body>
 </html>
