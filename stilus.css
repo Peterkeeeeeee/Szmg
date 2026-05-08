@@ -6,6 +6,8 @@
     --border: #e2e8f0;
     --text: #1e293b;
     --card-bg: #ffffff;
+    /* Magyar nyelvű ékezeteket támadó modern betűtípus */
+    --font-family: 'Poppins', sans-serif;
 }
 
 /* Rendszer szintű sötét mód felismerése */
@@ -29,57 +31,103 @@ body.dark-mode {
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: var(--font-family);
     background-color: var(--white);
     color: var(--text);
     margin: 0;
+    /* Vertikális és horizontális középre helyezés */
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* Bejelentkezés középre helyezése */
 .auth-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .card {
     background: var(--card-bg);
-    padding: 2.5rem;
+    /* Nagyobb belső térköz */
+    padding: 3rem 4rem;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     border: 1px solid var(--border);
     width: 100%;
-    max-width: 400px;
+    /* Nagyobb maximális szélesség */
+    max-width: 500px;
     text-align: center;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
-.logo { font-size: 24px; font-weight: 800; color: var(--dark-blue); margin-bottom: 20px; }
+.logo {
+    /* Nagyobb és stílusosabb logó */
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dark-blue);
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
+}
 .logo span { color: var(--orange); }
+
+h2 {
+    /* Nagyobb cím */
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
 
 input {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+    /* Nagyobb input mezők */
+    padding: 15px 20px;
+    margin: 12px 0;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--gray);
     color: var(--text);
     box-sizing: border-box;
+    font-size: 1rem;
+    font-family: var(--font-family);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
 }
 
 button {
     width: 100%;
-    padding: 12px;
+    /* Nagyobb gomb */
+    padding: 15px;
     background-color: var(--orange);
     color: white;
     border: none;
     border-radius: 10px;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-family: var(--font-family);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #f57c00;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+p {
+    margin-top: 25px;
+    font-size: 1rem;
+    font-family: var(--font-family);
 }
