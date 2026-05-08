@@ -8,58 +8,42 @@
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    <div class="glass-card">
+    <div class="glass-card" style="width: 450px;">
         <p class="brand-text">SZMG ONLINE</p>
         <div id="mappa-lista" class="mappa-lista">
-            <p id="statusz">Mappák betöltése...</p>
+            <p id="statusz">Adatok ellenőrzése...</p>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://hiiakcswjoynxyppwczu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const _supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg');
 
-        async function mappakBetoltese() {
-            // 1. Ellenőrizzük, tényleg be van-e lépve
-            const { data: { session } } = await _supabase.auth.getSession();
-            
-            if (!session) {
-                document.getElementById('statusz').innerText = "Nincs bejelentkezve! Átirányítás...";
-                setTimeout(() => window.location.href = 'index.html', 2000);
-                return;
-            }
-
-            // 2. Adatlekérés
-            const { data: mappak, error } = await _supabase
-                .from('mappak')
-                .select('*');
-
+        async function betoltes() {
+            // Lekérjük a mappákat
+            const { data: mappak, error } = await _supabase.from('mappak').select('*');
             const listaDiv = document.getElementById('mappa-lista');
 
             if (error) {
-                listaDiv.innerHTML = `<p style="color:red">Hiba az adatok lekérésekor: ${error.message}</p>`;
-                console.error(error);
+                listaDiv.innerHTML = `<p style="color:red">Hiba: ${error.message}</p>`;
                 return;
             }
 
-            if (mappak.length === 0) {
-                listaDiv.innerHTML = `<p>Nincsenek elérhető mappák. (Ellenőrizd az RLS-t!)</p>`;
+            if (!mappak || mappak.length === 0) {
+                listaDiv.innerHTML = `<p>A 'mappak' tábla üres a Supabase-ben! Adj hozzá sorokat.</p>`;
                 return;
             }
 
-            // 3. Megjelenítés
             listaDiv.innerHTML = ''; 
             mappak.forEach(m => {
                 const a = document.createElement('a');
-                a.href = `mappa.html?nev=${m.tabla_neve}`;
+                // Itt figyelünk a táblanévre
+                a.href = `tananyag.html?tabla=${encodeURIComponent(m.tabla_neve)}`;
                 a.className = 'mappa-elem';
                 a.innerHTML = `<span class="mappa-ikon">📂</span> <span>${m.megjelenitett_nev}</span>`;
                 listaDiv.appendChild(a);
             });
         }
-
-        mappakBetoltese();
+        betoltes();
     </script>
 </body>
 </html>
