@@ -3,97 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SZMG Online - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="stilus.css">
+    <title>SZMG ONLINE</title>
+    <link rel="icon" type="image/jpeg" href="szmglogo.jpg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="stilus.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root { --bg: #05070a; --card: #0f172a; --orange: #ff9800; --border: #1e293b; }
-        body { background: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #0f172a; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
-
-        /* Dinamikus rács elrendezés */
-        #folder-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 25px; 
-            width: 100%; 
-            max-width: 900px; 
-        }
-
-        .folder-card { 
-            background: var(--card); 
-            padding: 40px 20px; 
-            border-radius: 24px; 
-            text-align: center; 
-            cursor: pointer; 
-            border: 1px solid var(--border); 
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .folder-card:hover { border-color: var(--orange); transform: translateY(-8px); }
-        .folder-card i { font-size: 50px; color: var(--orange); margin-bottom: 20px; }
-        .folder-card h3 { margin: 0; font-size: 1.5rem; }
-
-        /* Fájl lista stílus - Fixálva a szétcsúszás ellen */
-        .file-container { display:none; width:100%; max-width:700px; }
-        .file-item { 
-            background: var(--card); 
-            padding: 18px 25px; 
-            border-radius: 15px; 
-            margin-bottom: 12px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border: 1px solid var(--border);
-        }
-        .file-info { display: flex; align-items: center; gap: 15px; }
-        .btn-open { background: #00bcd4; color: black; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 13px; transition: 0.2s; }
-        .btn-open:hover { background: #00e5ff; }
-    </style>
 </head>
 <body>
+
     <header>
         <div class="logo">SZMG <span>ONLINE</span></div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="showProfile()" class="btn" style="width:auto; background:none; border:1px solid var(--orange); color:var(--orange);">Profil</button>
-            <button onclick="logout()" class="btn" style="width:auto; background:var(--orange);">Kilépés</button>
+        <div style="display: flex; gap: 15px;">
+            <button class="btn-glass" onclick="showProfile()">
+                <i class="fas fa-user-circle"></i> Profil
+            </button>
+            <button class="btn-orange" onclick="logout()">Kilépés</button>
         </div>
     </header>
 
     <main>
-        <div id="folder-grid"></div>
+        <div id="folder-grid">
+            </div>
 
-        <div id="files-view" class="file-container">
-            <h2 id="folder-title" style="text-align: center; margin-bottom: 30px;"></h2>
+        <div id="files-view" class="view-container" style="display:none;">
+            <h2 id="folder-title" style="text-align: center; color: var(--orange); font-size: 2rem; margin-bottom: 30px;"></h2>
             <div id="file-list"></div>
-            <div style="text-align: center; margin-top: 30px;">
-                <button onclick="location.reload()" class="btn" style="width:auto; background:var(--border);">Vissza a mappákhoz</button>
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn-glass" onclick="location.reload()">
+                    <i class="fas fa-arrow-left"></i> Vissza a mappákhoz
+                </button>
             </div>
         </div>
 
-        <div id="profile-view" class="file-container" style="text-align: center; background:var(--card); padding: 40px; border-radius: 24px; border: 1px solid var(--border);">
-            <h2>Profil Beállítások</h2>
-            <p id="user-display" style="color:var(--orange); font-weight:bold;"></p>
-            <input type="password" id="new-pw" placeholder="Új jelszó" style="width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px; border: 1px solid var(--border); background: #05070a; color: white;">
-            <button onclick="updatePw()" class="btn" style="background:var(--orange);">Jelszó mentése</button>
-            <button onclick="location.reload()" class="btn" style="background:none; border: 1px solid white; margin-top: 10px;">Mégse</button>
+        <div id="profile-view" class="view-container" style="display:none; text-align: center;">
+            <div class="folder-card" style="cursor: default; max-width: 400px; margin: 0 auto;">
+                <i class="fas fa-user-shield"></i>
+                <h2>Profilom</h2>
+                <p id="user-display" style="font-weight:bold; color: var(--orange); margin-bottom: 20px;"></p>
+                <input type="password" id="new-pw" placeholder="Új jelszó megadása">
+                <button class="btn-orange" onclick="updatePw()" style="width: 100%; margin-top: 10px;">Mentés</button>
+                <button class="btn-glass" onclick="location.reload()" style="width: 100%; margin-top: 10px;">Mégse</button>
+            </div>
         </div>
     </main>
 
     <script>
+        // Supabase konfiguráció (A te adataiddal)
         const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // Mappák betöltése a 'mappak' táblából
+        // 1. MAPPÁK BETÖLTÉSE: Lekéri a 'mappak' táblát és kártyákat generál
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
-            if (error) return console.error(error);
+            if (error) return console.error("Hiba a mappák betöltésekor:", error);
 
             const grid = document.getElementById('folder-grid');
             grid.innerHTML = mappak.map(m => `
@@ -104,42 +71,55 @@
             `).join('');
         }
 
+        // 2. ADOTT MAPPA MEGNYITÁSA: Lekéri a fájlokat az adott osztály táblájából
         async function openFolder(tableName, displayName) {
             document.getElementById('folder-grid').style.display = 'none';
             document.getElementById('files-view').style.display = 'block';
-            document.getElementById('folder-title').innerText = displayName + " anyagok";
+            document.getElementById('folder-title').innerText = displayName;
 
-            const { data: fajlok } = await sb.from(tableName).select('*');
+            const { data: fajlok, error } = await sb.from(tableName).select('*');
             const list = document.getElementById('file-list');
             
-            list.innerHTML = fajlok && fajlok.length > 0 
-                ? fajlok.map(f => `
+            if (fajlok && fajlok.length > 0) {
+                list.innerHTML = fajlok.map(f => `
                     <div class="file-item">
-                        <div class="file-info">
-                            <i class="fas fa-file-pdf" style="color:#ff5252;"></i>
-                            <span>${f.Leírás}</span>
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <i class="fas fa-file-pdf" style="color: #ff4444; font-size: 1.4rem;"></i>
+                            <span style="font-weight: 500;">${f.Leírás}</span>
                         </div>
-                        <a href="${f.Fájl}" target="_blank" class="btn-open">Megnyitás</a>
+                        <a href="${f.Fájl}" target="_blank" class="btn-glass" style="padding: 6px 15px; font-size: 13px;">Megnyitás</a>
                     </div>
-                `).join('')
-                : "<p style='text-align:center;'>Még nincs itt semmi.</p>";
+                `).join('');
+            } else {
+                list.innerHTML = "<p style='text-align:center; opacity:0.6;'>Ebben a mappában még nincsenek anyagok.</p>";
+            }
         }
 
+        // 3. PROFIL MEGJELENÍTÉSE
         async function showProfile() {
             document.getElementById('folder-grid').style.display = 'none';
             document.getElementById('profile-view').style.display = 'block';
             const { data: { user } } = await sb.auth.getUser();
-            document.getElementById('user-display').innerText = user.email;
+            if (user) document.getElementById('user-display').innerText = user.email;
         }
 
+        // 4. JELSZÓ MÓDOSÍTÁS
         async function updatePw() {
             const pw = document.getElementById('new-pw').value;
+            if (pw.length < 6) return alert("A jelszónak legalább 6 karakternek kell lennie!");
+            
             const { error } = await sb.auth.updateUser({ password: pw });
-            if (error) alert(error.message); else { alert("Sikeres módosítás!"); location.reload(); }
+            if (error) alert(error.message); 
+            else { alert("Jelszó sikeresen módosítva!"); location.reload(); }
         }
 
-        async function logout() { await sb.auth.signOut(); window.location.href = "index.html"; }
+        // 5. KILÉPÉS
+        async function logout() { 
+            await sb.auth.signOut(); 
+            window.location.href = "index.html"; 
+        }
         
+        // Oldal indulásakor mappák listázása
         loadFolders();
     </script>
 </body>
