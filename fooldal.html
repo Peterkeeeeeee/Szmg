@@ -9,35 +9,41 @@
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="szmglogo.jpg" alt="Logo">
-            SZMG <span>ONLINE</span>
+        <div style="font-weight:700; display:flex; align-items:center; gap:10px;">
+            <img src="szmglogo.jpg" style="width:35px; height:35px; border-radius:8px;">
+            SZMG <span style="color:var(--orange)">ONLINE</span>
         </div>
         <div style="display:flex; gap:10px;">
-            <button class="btn-glass" onclick="location.href='admin.html'" style="width:auto;">Admin</button>
-            <button class="btn-glass" onclick="showProfile()" style="width:auto;">Profil</button>
+            <button class="btn-glass" onclick="location.href='admin.html'" style="width:auto; padding:8px 15px;">Admin</button>
+            <button class="btn-glass" onclick="showProfile()" style="width:auto; padding:8px 15px;">Profil</button>
         </div>
     </header>
 
-    <main id="content-area">
-        <div id="folder-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%;">
+    <main>
+        <div id="folder-grid" style="width:100%; display:grid; gap:15px;">
             </div>
+
+        <div id="files-view" class="glass-card" style="display:none;">
+            <h2 id="folder-title" style="margin-top:0;"></h2>
+            <div id="file-list"></div>
+            <button class="btn-glass" onclick="location.reload()" style="margin-top:20px;">Vissza</button>
+        </div>
 
         <div id="profile-view" class="glass-card" style="display:none;">
             <h2>Beállítások</h2>
-            <button class="btn-glass" onclick="toggleTheme()">Sötét / Világos mód váltása</button>
+            <button class="btn-glass" onclick="toggleTheme()">Sötét / Világos mód</button>
             <input type="password" id="new-pw" placeholder="Új jelszó">
-            <button class="btn-orange" onclick="updatePw()">Jelszó mentése</button>
-            <button class="btn-glass" onclick="location.reload()" style="margin-top:10px;">Vissza</button>
-            <button class="btn-glass" onclick="logout()" style="color: #ff453a; border-color: rgba(255,69,58,0.3);">Kijelentkezés</button>
+            <button class="btn-orange" onclick="updatePw()">Mentés</button>
+            <button class="btn-glass" onclick="location.reload()">Mégse</button>
+            <button class="btn-glass" onclick="logout()" style="color:#ff453a;">Kijelentkezés</button>
         </div>
     </main>
 
     <script>
-        // Supabase Init...
-        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "KULCS");
+        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+        const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // Téma kezelés (LocalStorage-ban elmentjük)
         if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
 
         function toggleTheme() {
@@ -49,10 +55,27 @@
             const { data } = await sb.from('mappak').select('*');
             const grid = document.getElementById('folder-grid');
             grid.innerHTML = data.map(m => `
-                <div class="glass-card" onclick="openFolder('${m.tábla_neve}')">
-                    <h3 style="margin:0;">${m.megjelenített_név}</h3>
+                <div class="glass-card" onclick="openFolder('${m.tábla_neve}', '${m.megjelenített_név}')" style="cursor:pointer;">
+                    <h3 style="margin:0;">📂 ${m.megjelenített_név}</h3>
                 </div>
             `).join('');
+        }
+
+        async function openFolder(tableName, displayName) {
+            document.getElementById('folder-grid').style.display = 'none';
+            document.getElementById('files-view').style.display = 'block';
+            document.getElementById('folder-title').innerText = displayName;
+
+            const { data } = await sb.from(tableName).select('*');
+            const list = document.getElementById('file-list');
+            list.innerHTML = data && data.length > 0 
+                ? data.map(f => `
+                    <div class="file-row">
+                        <span>${f.Leírás}</span>
+                        <a href="${f.Fájl}" target="_blank" class="btn-glass" style="width:auto; padding:5px 15px; font-size:12px;">Megnyitás</a>
+                    </div>
+                `).join('')
+                : "Még nincs fájl.";
         }
 
         function showProfile() {
