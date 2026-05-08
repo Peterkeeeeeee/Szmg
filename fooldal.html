@@ -14,7 +14,6 @@
                 <div id="folder-list" class="folder-tree">
                     </div>
             </div>
-
             <div class="sidebar-footer">
                 <a href="admin.html"><i class="fas fa-user-shield"></i> Admin oldal</a>
                 <a href="profil.html"><i class="fas fa-user-circle"></i> Profil</a>
@@ -23,8 +22,7 @@
 
         <main class="content-area">
             <div id="welcome-message" class="empty-state">
-                <i class="fas fa-arrow-left"></i>
-                <h2>Válassz egy témakört a bal oldali menüből!</h2>
+                <h2>Válassz egy témakört!</h2>
             </div>
             
             <div id="file-display" style="display: none;">
@@ -41,64 +39,4 @@
             </div>
         </main>
     </div>
-
-    <script>
-        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
-        const sb = supabase.createClient(SB_URL, SB_KEY);
-
-        async function loadFolders() {
-            const { data: mappak, error } = await sb.from('mappak').select('*');
-            if (error) return;
-
-            const folderList = document.getElementById('folder-list');
-            folderList.innerHTML = '';
-
-            mappak.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'tree-item';
-                div.onclick = () => openFolder(m.tabla_neve, m.megjelenitett_nev);
-                div.innerHTML = `<i class="fas fa-folder"></i> <span>${m.megjelenitett_nev}</span>`;
-                folderList.appendChild(div);
-            });
-        }
-
-        async function openFolder(tableName, displayName) {
-            document.getElementById('welcome-message').style.display = 'none';
-            document.getElementById('file-display').style.display = 'block';
-            document.getElementById('current-folder-name').innerText = displayName;
-            
-            const { data, error } = await sb.from(tableName).select('*');
-            if (error) return;
-
-            const list = document.getElementById('file-list');
-            list.innerHTML = data.map(f => `
-                <div class="file-card">
-                    <i class="fas fa-file-pdf"></i>
-                    <div class="file-info">
-                        <strong>${f.Leírás}</strong>
-                    </div>
-                    <button onclick="openPreview('${f.Fájl}', '${f.Leírás}')">Megnyitás</button>
-                </div>
-            `).join('');
-        }
-
-        function openPreview(url, title) {
-            const preview = document.getElementById('preview-container');
-            document.getElementById('preview-frame').src = url;
-            document.getElementById('preview-title').innerText = title;
-            preview.style.display = 'flex';
-        }
-
-        function closePreview() {
-            document.getElementById('preview-container').style.display = 'none';
-            document.getElementById('preview-frame').src = '';
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        loadFolders();
-    </script>
 </body>
