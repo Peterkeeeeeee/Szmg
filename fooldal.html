@@ -2,174 +2,60 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SZMG Online</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --white: #ffffff;
-            --orange: #ff9800;
-            --dark-blue: #1e3a8a;
-            --gray: #f4f4f4;
-            --text: #333;
-            --card-bg: #ffffff;
-            --sidebar-bg: #ffffff;
-        }
-
-        /* Sötét mód színei */
-        body.dark-mode {
-            --white: #0f172a;
-            --gray: #1e293b;
-            --text: #f1f5f9;
-            --card-bg: #1e293b;
-            --sidebar-bg: #0f172a;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--white);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            transition: 0.3s ease;
-        }
-
-        /* Fejléc */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 20px;
-            background: var(--white);
-            border-bottom: 2px solid var(--gray);
-            z-index: 100;
-        }
-
-        .header-left i { color: var(--dark-blue); font-size: 22px; cursor: pointer; }
-        .logo { font-size: 22px; font-weight: 800; color: var(--dark-blue); letter-spacing: -1px; }
-        .logo span { color: var(--orange); }
-
-        .profile-btn {
-            width: 38px;
-            height: 38px;
-            background-color: var(--dark-blue);
-            color: white;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
-            position: relative;
-        }
-
-        /* Profil Menü (Dropdown) */
-        .profile-menu {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: var(--card-bg);
-            border: 1px solid var(--gray);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 180px;
-            overflow: hidden;
-            z-index: 1000;
-        }
-
-        .profile-menu button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            background: none;
-            color: var(--text);
-            text-align: left;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-menu button:hover { background: var(--gray); }
-
-        /* Oldalsáv (Sidebar) */
-        #sidebar {
-            position: fixed;
-            left: -280px;
-            top: 0;
-            width: 280px;
-            height: 100%;
-            background: var(--sidebar-bg);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
-            transition: 0.4s;
-            z-index: 200;
-            padding-top: 60px;
-        }
-
-        #sidebar.active { left: 0; }
-
-        .sidebar-item {
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .sidebar-item:hover { background: var(--gray); color: var(--orange); }
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 150;
-        }
-
-        /* Központi rész */
-        main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
-
-        .floating-folder {
-            background: var(--card-bg);
-            width: 220px;
-            height: 220px;
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid var(--gray);
-            cursor: pointer;
-            transition: 0.4s;
-        }
-
-        .floating-folder:hover { transform: translateY(-10px); border-color: var(--orange); }
-        .floating-folder i { font-size: 80px; color: var(--orange); margin-bottom: 15px; }
-
-        /* Fájl lista nézet */
-        #file-view { display: none; width: 100%; max-width: 600px; animation: fadeIn 0.4s; }
-        .file-item {
-            background: var(--gray);
-            padding: 15px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-decoration: none;
-            color: var(--text);
-            margin-bottom: 10px;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
     <link rel="stylesheet" href="stilus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body id="body">
+<body>
+    <header>
+        <div class="logo">SZMG <span>ONLINE</span></div>
+        <div class="nav-icons">
+            <button onclick="logout()" style="width:auto; padding:5px 10px;">Kilépés</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="folder-view">
+            <div class="floating-folder" onclick="openFolder()">
+                <i class="fas fa-folder-open"></i>
+                <span>Fizika 9.</span>
+            </div>
+        </div>
+
+        <div id="file-view" style="display:none; width:100%; max-width:600px;">
+            <button onclick="closeFolder()" class="btn" style="margin-bottom:20px; background:var(--orange);">Vissza</button>
+            <div id="file-list"></div>
+        </div>
+    </main>
+
+    <script>
+        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+        const sb = supabase.createClient(SB_URL, SB_KEY);
+
+        async function openFolder() {
+            document.getElementById('folder-view').style.display = 'none';
+            document.getElementById('file-view').style.display = 'block';
+            const { data } = await sb.from('Fizika 9').select('*');
+            const list = document.getElementById('file-list');
+            list.innerHTML = data.map(f => `
+                <a href="${f.Fájl}" target="_blank" class="card" style="display:flex; justify-content:space-between; margin-bottom:10px; padding:15px; text-decoration:none; color:var(--text);">
+                    <span>${f.Leírás}</span><i class="fas fa-external-link-alt"></i>
+                </a>
+            `).join('');
+        }
+
+        function closeFolder() {
+            document.getElementById('file-view').style.display = 'none';
+            document.getElementById('folder-view').style.display = 'block';
+        }
+
+        async function logout() {
+            await sb.auth.signOut();
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
