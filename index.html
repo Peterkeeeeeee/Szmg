@@ -9,38 +9,37 @@
 <body>
     <div class="hatter-animacio"></div>
     
-    <div class="glass-container">
-        <form id="login-form" class="login-card">
-            <p class="brand-text">SZMG ONLINE</p>
-            <h1>Bejelentkezés</h1>
-            
+    <div class="login-card">
+        <p class="brand-text">SZMG ONLINE</p>
+        <h1>Bejelentkezés</h1>
+        
+        <form id="login-form">
             <div class="input-csoport">
-                <label for="email">Email cím</label>
-                <input type="email" id="email" placeholder="pelda@iskola.hu" required>
+                <label>Email cím</label>
+                <input type="email" id="email" placeholder="Kérem adja meg..." required>
             </div>
             
             <div class="input-csoport">
-                <label for="password">Jelszó</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <label>Jelszó</label>
+                <input type="password" id="password" placeholder="Kérem adja meg..." required>
             </div>
             
             <button type="submit" class="btn-login">Belépés</button>
-            
-            <p class="reg-link">Nincs még fiókod? <a href="#">Regisztrálj!</a></p>
-            
-            <div class="social-icons">
-                <div class="icon"></div>
-                <div class="icon"></div>
-                <div class="icon"></div>
-            </div>
         </form>
+        
+        <p class="reg-link">Nincs még fiókod? <a href="#">Regisztrálj!</a></p>
+        
+        <div class="ora-ikonok">
+            <div class="ora-box">🕒</div>
+            <div class="ora-box">🕒</div>
+            <div class="ora-box">🕒</div>
+        </div>
     </div>
 
     <script>
-        // Belépés logika: Ha rákattint a gombra, átviszi a fooldal.html-re
+        // Belépés és átirányítás a főoldalra
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Itt később jöhet a Supabase hitelesítés, most csak átirányítunk
             window.location.href = 'fooldal.html';
         });
     </script>
