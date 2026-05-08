@@ -3,16 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SZMG Online</title>
+    <title>SZMG Online - Főoldal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="stilus.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Extra fixek, hogy biztosan középen legyen minden */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text);
+        }
+        .btn-open {
+            background: #00bcd4; /* Világoskék, mint a képeden */
+            color: black;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">SZMG <span>ONLINE</span></div>
         <div class="nav-icons">
-            <button onclick="logout()" style="width:auto; padding:5px 10px;">Kilépés</button>
+            <button onclick="logout()" style="width:auto; padding:8px 15px; background:var(--orange);">Kilépés</button>
         </div>
     </header>
 
@@ -20,13 +73,17 @@
         <div id="folder-view">
             <div class="floating-folder" onclick="openFolder()">
                 <i class="fas fa-folder-open"></i>
-                <span>Fizika 9.</span>
+                <span style="font-weight:800; font-size: 1.2rem;">Fizika 9.</span>
             </div>
         </div>
 
-        <div id="file-view" style="display:none; width:100%; max-width:600px;">
-            <button onclick="closeFolder()" class="btn" style="margin-bottom:20px; background:var(--orange);">Vissza</button>
-            <div id="file-list"></div>
+        <div id="file-view" style="display:none; width:100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%;">
+                <h2 style="margin: 0;">Fizika 9. anyagok</h2>
+                <button onclick="closeFolder()" class="btn" style="width:auto; padding:10px 20px; background:var(--dark-blue);">Vissza</button>
+            </div>
+            <div id="file-list">
+                </div>
         </div>
     </main>
 
@@ -35,16 +92,32 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
+        async function checkUser() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) window.location.replace("index.html");
+        }
+        checkUser();
+
         async function openFolder() {
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
-            const { data } = await sb.from('Fizika 9').select('*');
+            
+            const { data, error } = await sb.from('Fizika 9').select('*');
             const list = document.getElementById('file-list');
-            list.innerHTML = data.map(f => `
-                <a href="${f.Fájl}" target="_blank" class="card" style="display:flex; justify-content:space-between; margin-bottom:10px; padding:15px; text-decoration:none; color:var(--text);">
-                    <span>${f.Leírás}</span><i class="fas fa-external-link-alt"></i>
-                </a>
-            `).join('');
+            
+            if (data && data.length > 0) {
+                list.innerHTML = data.map(f => `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: #ff9800;"></i>
+                            <span style="font-size: 1.1rem;">${f.Leírás}</span>
+                        </div>
+                        <a href="${f.Fájl}" target="_blank" class="btn-open">Megnyitás</a>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = "<p style='text-align:center;'>Nincsenek feltöltött anyagok.</p>";
+            }
         }
 
         function closeFolder() {
@@ -54,7 +127,7 @@
 
         async function logout() {
             await sb.auth.signOut();
-            window.location.href = "index.html";
+            window.location.replace("index.html");
         }
     </script>
 </body>
