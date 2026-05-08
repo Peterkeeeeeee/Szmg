@@ -39,6 +39,40 @@
         .folder-box span {
             font-weight: 700;
         }
+
+        /* --- ÚJ: MODAL STÍLUSOK --- */
+        #preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            background: #2c3e50;
+            color: white;
+        }
+        .modal-body {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+        }
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -62,19 +96,23 @@
         </div>
     </main>
 
+    <!-- ÚJ: BEÁGYAZOTT NÉZET (MODAL) HTML -->
+    <div id="preview-modal">
+        <div class="modal-header">
+            <span id="modal-title">Fájl megtekintése</span>
+            <button class="close-btn" onclick="closePreview()">Bezárás</button>
+        </div>
+        <iframe id="preview-frame" class="modal-body" src=""></iframe>
+    </div>
+
     <script>
         const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // Mappák betöltése az ékezetmentes oszlopnevekkel
         async function loadFolders() {
             const { data: mappak, error } = await sb.from('mappak').select('*');
-            
-            if (error) {
-                console.error("Hiba:", error.message);
-                return;
-            }
+            if (error) return;
 
             const folderView = document.getElementById('folder-view');
             folderView.innerHTML = '';
@@ -82,7 +120,6 @@
             mappak.forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'folder-box';
-                // Használjuk az új, ékezetmentes neveket!
                 div.onclick = () => openFolder(m.tabla_neve);
                 div.innerHTML = `
                     <i class="fas fa-folder-open"></i>
@@ -96,17 +133,37 @@
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
             
-            // Lekérjük a konkrét tábla tartalmát (pl. Fizika 9)
             const { data, error } = await sb.from(tableName).select('*');
             if (error) return alert("Hiba a fájlok betöltésekor!");
 
             const list = document.getElementById('file-list');
+            // MÓDOSÍTVA: Az <a> tag helyett gombot használunk, ami meghívja a preview-t
             list.innerHTML = data.map(f => `
                 <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; color: white;">
                     <span><i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 10px;"></i> ${f.Leírás}</span>
-                    <a href="${f.Fájl}" target="_blank" style="background: #3498db; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold;">Megnyitás</a>
+                    <button onclick="openPreview('${f.Fájl}', '${f.Leírás}')" style="background: #3498db; border:none; color: white; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor:pointer;">Megnyitás</button>
                 </div>
             `).join('');
+        }
+
+        // ÚJ FUNKCIÓK A MEGNYITÁSHOZ ÉS BEZÁRÁSHOZ
+        function openPreview(url, title) {
+            const modal = document.getElementById('preview-modal');
+            const iframe = document.getElementById('preview-frame');
+            document.getElementById('modal-title').innerText = title;
+            
+            iframe.src = url;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Ne görögjön a háttér
+        }
+
+        function closePreview() {
+            const modal = document.getElementById('preview-modal');
+            const iframe = document.getElementById('preview-frame');
+            
+            iframe.src = ""; // Leállítjuk a tartalom betöltését
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         function closeFolder() {
