@@ -3,186 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - SZMG Online</title>
+    <title>SZMG Admin</title>
+    <link rel="stylesheet" href="stilus.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --white: #ffffff; --orange: #ff9800; --dark-blue: #1e3a8a; --gray: #f4f4f4; --text: #333; --red: #f43f5e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--gray); color: var(--text); margin: 0; }
-        header { background: var(--dark-blue); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
-        
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        h2 { color: var(--dark-blue); border-bottom: 2px solid var(--orange); padding-bottom: 5px; }
-
-        /* Form stílus */
-        .form-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; flex: 1; min-width: 150px; }
-        .btn-add { background: var(--orange); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-
-        /* Táblázat stílus */
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-        th { background: #f8f9fa; color: var(--dark-blue); }
-        .btn-del { color: var(--red); cursor: pointer; background: none; border: none; }
-        .btn-edit { color: var(--dark-blue); cursor: pointer; background: none; border: none; margin-right: 10px; }
-
-        /* Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #ddd; border-radius: 6px; font-weight: bold; }
-        .tab-btn.active { background: var(--dark-blue); color: white; }
-        .section { display: none; }
-        .section.active { display: block; }
-    </style>
 </head>
 <body>
+    <header>
+        <div class="logo">SZMG <span>ADMIN</span></div>
+        <a href="fooldal.html" style="color:white; text-decoration:none;">Vissza</a>
+    </header>
 
-<header>
-    <div class="logo">SZMG <span>Admin</span></div>
-    <button onclick="window.location.href='fooldal.html'" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">Vissza a főoldalra</button>
-</header>
-
-<div class="container">
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showSection('files')">Anyagok kezelése</button>
-        <button class="tab-btn" onclick="showSection('users')">Felhasználók</button>
-    </div>
-
-    <div id="files" class="section active">
-        <div class="card">
-            <h2>Új anyag feltöltése</h2>
-            <div class="form-group">
-                <input type="text" id="file-title" placeholder="Lecke címe">
-                <input type="text" id="file-url" placeholder="Fájl link (Google Drive)">
-                <select id="file-class">
-                    <option value="9">9. osztály</option>
-                    <option value="10">10. osztály</option>
-                </select>
-                <button class="btn-add" onclick="uploadFile()">Feltöltés</button>
-            </div>
+    <main>
+        <div class="card" style="max-width:600px;">
+            <h3>Új osztály hozzáadása</h3>
+            <input type="text" id="new-class-name" placeholder="Osztály neve (pl. 11.C)">
+            <button onclick="addClass()">Hozzáadás</button>
         </div>
 
-        <div class="card">
-            <h2>Feltöltött anyagok</h2>
-            <table id="files-table">
-                <thead>
-                    <tr>
-                        <th>Cím</th>
-                        <th>Osztály</th>
-                        <th>Dátum</th>
-                        <th>Műveletek</th>
-                    </tr>
-                </thead>
-                <tbody id="files-body"></tbody>
-            </table>
+        <div class="card" style="max-width:600px; margin-top:20px;">
+            <h3>Anyag feltöltése</h3>
+            <input type="text" id="f-desc" placeholder="Leírás">
+            <input type="text" id="f-url" placeholder="Google Drive link">
+            <button onclick="addFile()">Feltöltés</button>
         </div>
-    </div>
+    </main>
 
-    <div id="users" class="section">
-        <div class="card">
-            <h2>Regisztrált felhasználók</h2>
-            <table id="users-table">
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Jogosultság</th>
-                        <th>Látható osztály</th>
-                        <th>Mentés</th>
-                    </tr>
-                </thead>
-                <tbody id="users-body"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
+    <script>
+        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+        const sb = supabase.createClient(SB_URL, SB_KEY);
 
-<script>
-    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-    const SB_KEY = "YOUR_SUPABASE_KEY"; // Használd a saját kulcsod
-    const sb = supabase.createClient(SB_URL, SB_KEY);
-
-    // Tab váltás
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.target.classList.add('active');
-        if(id === 'files') loadFiles();
-        if(id === 'users') loadUsers();
-    }
-
-    // --- ANYAGOK FUNKCIÓI ---
-    async function loadFiles() {
-        const { data } = await sb.from('Fizika 9').select('*').order('created_at', { ascending: false });
-        const body = document.getElementById('files-body');
-        body.innerHTML = "";
-        data.forEach(item => {
-            const date = new Date(item.created_at).toLocaleDateString('hu-HU');
-            body.innerHTML += `
-                <tr>
-                    <td>${item.Leírás}</td>
-                    <td>${item.osztaly || '9'}.</td>
-                    <td>${date}</td>
-                    <td>
-                        <button class="btn-del" onclick="deleteFile('${item.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    async function uploadFile() {
-        const title = document.getElementById('file-title').value;
-        const url = document.getElementById('file-url').value;
-        const cls = document.getElementById('file-class').value;
-        if(!title || !url) return alert("Tölts ki mindent!");
-        
-        await sb.from('Fizika 9').insert([{ Leírás: title, Fájl: url, osztaly: cls }]);
-        loadFiles();
-    }
-
-    async function deleteFile(id) {
-        if(confirm("Biztosan törlöd?")) {
-            await sb.from('Fizika 9').delete().eq('id', id);
-            loadFiles();
+        async function addClass() {
+            const nev = document.getElementById('new-class-name').value;
+            await sb.from('osztalyok').insert([{ nev }]);
+            alert("Osztály hozzáadva!");
+            document.getElementById('new-class-name').value = '';
         }
-    }
 
-    // --- FELHASZNÁLÓK FUNKCIÓI ---
-    async function loadUsers() {
-        const { data } = await sb.from('profiles').select('*');
-        const body = document.getElementById('users-body');
-        body.innerHTML = "";
-        data.forEach(user => {
-            body.innerHTML += `
-                <tr>
-                    <td>${user.email}</td>
-                    <td>
-                        <select onchange="updateUser('${user.id}', 'is_admin', this.value === 'true')">
-                            <option value="false" ${!user.is_admin ? 'selected' : ''}>Felhasználó</option>
-                            <option value="true" ${user.is_admin ? 'selected' : ''}>Admin</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select onchange="updateUser('${user.id}', 'class', this.value)">
-                            <option value="9" ${user.class === '9' ? 'selected' : ''}>9. osztály</option>
-                            <option value="10" ${user.class === '10' ? 'selected' : ''}>10. osztály</option>
-                            <option value="all" ${user.class === 'all' ? 'selected' : ''}>Mindegyik</option>
-                        </select>
-                    </td>
-                    <td><i class="fas fa-check" style="color:green"></i></td>
-                </tr>
-            `;
-        });
-    }
-
-    async function updateUser(id, field, value) {
-        const updateData = {};
-        updateData[field] = value;
-        await sb.from('profiles').update(updateData).eq('id', id);
-    }
-
-    loadFiles();
-</script>
+        async function addFile() {
+            const Leírás = document.getElementById('f-desc').value;
+            const Fájl = document.getElementById('f-url').value;
+            await sb.from('Fizika 9').insert([{ Leírás, Fájl }]);
+            alert("Fájl hozzáadva!");
+        }
+    </script>
 </body>
 </html>
