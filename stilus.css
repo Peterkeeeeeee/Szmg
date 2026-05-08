@@ -1,58 +1,133 @@
-body, html {
-    margin: 0; padding: 0; height: 100%;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #000;
-    display: flex; justify-content: center; align-items: center;
-    color: white; overflow: hidden;
+:root {
+    --white: #ffffff;
+    --orange: #ff9800;
+    --dark-blue: #1e3a8a;
+    --gray: #f8f9fa;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --card-bg: #ffffff;
+    /* Magyar nyelvű ékezeteket támadó modern betűtípus */
+    --font-family: 'Poppins', sans-serif;
 }
 
-.hatter-animacio {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
-    z-index: -1;
+/* Rendszer szintű sötét mód felismerése */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #0f172a;
+        --gray: #1e293b;
+        --border: #334155;
+        --text: #f1f5f9;
+        --card-bg: #1e293b;
+    }
 }
 
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 25px;
-    padding: 40px; width: 450px; text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+/* Kézi sötét mód felülbírálás (ha a JS-ből váltasz) */
+body.dark-mode {
+    --white: #0f172a;
+    --gray: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --card-bg: #1e293b;
 }
 
-.brand-text {
-    font-size: 0.7rem; letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase; margin-bottom: 5px;
+body {
+    font-family: var(--font-family);
+    background-color: var(--white);
+    color: var(--text);
+    margin: 0;
+    /* Vertikális és horizontális középre helyezés */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-h1 { font-weight: 600; margin-bottom: 30px; font-size: 2rem; }
+/* Bejelentkezés középre helyezése */
+.auth-container {
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    /* Nagyobb belső térköz */
+    padding: 3rem 4rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+    width: 100%;
+    /* Nagyobb maximális szélesség */
+    max-width: 500px;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.logo {
+    /* Nagyobb és stílusosabb logó */
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dark-blue);
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
+}
+.logo span { color: var(--orange); }
+
+h2 {
+    /* Nagyobb cím */
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
 
 input {
-    width: 100%; padding: 12px; margin-bottom: 15px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px; color: white; outline: none;
+    width: 100%;
+    /* Nagyobb input mezők */
+    padding: 15px 20px;
+    margin: 12px 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--gray);
+    color: var(--text);
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: var(--font-family);
 }
 
-.btn-login {
-    width: 100%; padding: 14px; border: none; border-radius: 12px;
-    background: linear-gradient(90deg, #a0d8f1 0%, #f190b7 100%);
-    color: white; font-weight: bold; font-size: 1rem; cursor: pointer;
+input:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
 }
 
-.mappa-lista { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
-
-.mappa-elem {
-    display: flex; align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 20px; border-radius: 18px;
-    text-decoration: none; color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
+button {
+    width: 100%;
+    /* Nagyobb gomb */
+    padding: 15px;
+    background-color: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-family: var(--font-family);
+    transition: background-color 0.2s, transform 0.1s;
 }
 
-.mappa-elem:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-2px); }
-.mappa-ikon { font-size: 1.5rem; margin-right: 15px; }
+button:hover {
+    background-color: #f57c00;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+p {
+    margin-top: 25px;
+    font-size: 1rem;
+    font-family: var(--font-family);
+}
