@@ -1,99 +1,88 @@
-* { box-sizing: border-box; }
-
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Arial', sans-serif;
-    background-color: #0a0b10;
-    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
-/* Sötét gradiens háttér */
 .hatter-animacio {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 50%, #1a1c25 0%, #0a0b10 100%);
+    background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
     z-index: -1;
 }
 
-/* Üveg kártya stílus */
-.login-card, .fooldal-kontener {
+.glass-card {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 40px;
     width: 400px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
 }
 
 .brand-text {
     font-size: 0.7rem;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     color: rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
+    margin-bottom: 5px;
 }
 
-h1 { font-size: 1.8rem; margin: 10px 0 30px 0; }
+h1 { font-weight: 600; margin-bottom: 30px; font-size: 2rem; }
 
 .input-csoport { text-align: left; margin-bottom: 20px; }
 
-label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px; }
+label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 8px; }
 
 input {
     width: 100%;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     color: white;
     outline: none;
 }
 
-/* Színátmenetes gomb a képről */
+/* A képen látható színátmenetes Belépés gomb */
 .btn-login {
     width: 100%;
-    padding: 15px;
+    padding: 14px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(90deg, #b0e0ff 0%, #ff85b2 100%);
+    background: linear-gradient(90deg, #a0d8f1 0%, #f190b7 100%);
     color: white;
     font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
     margin-top: 10px;
 }
 
-.reg-link { font-size: 0.8rem; margin-top: 20px; }
-.reg-link a { color: #ff85b2; text-decoration: none; }
+.reg-link { font-size: 0.85rem; margin-top: 20px; color: rgba(255,255,255,0.6); }
 
-/* Óra ikonok alul */
-.ora-ikonok { display: flex; justify-content: center; gap: 10px; margin-top: 30px; }
-.ora-box {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* Főoldali mappa elrendezés */
+.mappa-lista { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
 
-/* Főoldali mappák */
-.mappa-lista { display: flex; flex-direction: column; gap: 15px; }
 .mappa-elem {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 18px;
     border-radius: 15px;
     text-decoration: none;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s;
 }
-.mappa-elem:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.02); }
-.mappa-ikon { font-size: 1.5rem; margin-right: 15px; }
-.mappa-nev { font-weight: bold; letter-spacing: 1px; }
+
+.mappa-elem:hover { background: rgba(255, 255, 255, 0.12); }
+.mappa-ikon { font-size: 1.4rem; margin-right: 15px; }
