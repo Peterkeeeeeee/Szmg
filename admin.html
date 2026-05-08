@@ -10,20 +10,20 @@
 <body>
     <header>
         <div class="logo">SZMG <span>ADMIN</span></div>
-        <a href="fooldal.html" style="color:white; text-decoration:none;">Vissza</a>
+        <a href="fooldal.html" style="color:white; text-decoration:none;">Vissza a főoldalra</a>
     </header>
 
     <main>
-        <div class="card" style="max-width:600px;">
+        <div class="card">
             <h3>Új osztály hozzáadása</h3>
-            <input type="text" id="new-class-name" placeholder="Osztály neve (pl. 11.C)">
-            <button onclick="addClass()">Hozzáadás</button>
+            <input type="text" id="new-class-name" placeholder="Osztály neve">
+            <button onclick="addClass()">Mentés</button>
         </div>
 
-        <div class="card" style="max-width:600px; margin-top:20px;">
+        <div class="card" style="margin-top:20px;">
             <h3>Anyag feltöltése</h3>
-            <input type="text" id="f-desc" placeholder="Leírás">
-            <input type="text" id="f-url" placeholder="Google Drive link">
+            <input type="text" id="f-desc" placeholder="Cím">
+            <input type="text" id="f-url" placeholder="Link">
             <button onclick="addFile()">Feltöltés</button>
         </div>
     </main>
@@ -33,18 +33,33 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
+        // ADMIN GUARD: Kidob, ha nem vagy admin
+        async function checkAdmin() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                window.location.replace("index.html");
+                return;
+            }
+            // Ellenőrizzük a profil táblában az admin jogot
+            const { data: profile } = await sb.from('profiles').select('is_admin').eq('id', session.user.id).single();
+            if (!profile || !profile.is_admin) {
+                alert("Nincs admin jogod!");
+                window.location.replace("fooldal.html");
+            }
+        }
+        checkAdmin();
+
         async function addClass() {
             const nev = document.getElementById('new-class-name').value;
             await sb.from('osztalyok').insert([{ nev }]);
-            alert("Osztály hozzáadva!");
-            document.getElementById('new-class-name').value = '';
+            alert("Osztály elmentve!");
         }
 
         async function addFile() {
             const Leírás = document.getElementById('f-desc').value;
             const Fájl = document.getElementById('f-url').value;
             await sb.from('Fizika 9').insert([{ Leírás, Fájl }]);
-            alert("Fájl hozzáadva!");
+            alert("Sikeres feltöltés!");
         }
     </script>
 </body>
