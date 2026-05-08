@@ -8,29 +8,58 @@
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    <div class="glass-card" style="width: 450px;">
+    <div class="glass-card">
         <p class="brand-text">SZMG ONLINE</p>
         <div id="mappa-lista" class="mappa-lista">
-            </div>
+            <p id="statusz">Mappák betöltése...</p>
+        </div>
     </div>
 
     <script>
-        const supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'IDE_AZ_ANON_KEYT');
+        const SUPABASE_URL = 'https://hiiakcswjoynxyppwczu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function betoltes() {
-            const { data: mappak, error } = await supabase.from('mappak').select('*');
-            if (error) return;
+        async function mappakBetoltese() {
+            // 1. Ellenőrizzük, tényleg be van-e lépve
+            const { data: { session } } = await _supabase.auth.getSession();
+            
+            if (!session) {
+                document.getElementById('statusz').innerText = "Nincs bejelentkezve! Átirányítás...";
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
 
-            const lista = document.getElementById('mappa-lista');
+            // 2. Adatlekérés
+            const { data: mappak, error } = await _supabase
+                .from('mappak')
+                .select('*');
+
+            const listaDiv = document.getElementById('mappa-lista');
+
+            if (error) {
+                listaDiv.innerHTML = `<p style="color:red">Hiba az adatok lekérésekor: ${error.message}</p>`;
+                console.error(error);
+                return;
+            }
+
+            if (mappak.length === 0) {
+                listaDiv.innerHTML = `<p>Nincsenek elérhető mappák. (Ellenőrizd az RLS-t!)</p>`;
+                return;
+            }
+
+            // 3. Megjelenítés
+            listaDiv.innerHTML = ''; 
             mappak.forEach(m => {
-                const item = document.createElement('a');
-                item.href = `tananyag.html?tabla=${m.tabla_neve}`;
-                item.className = 'mappa-elem';
-                item.innerHTML = `<span class="mappa-ikon">📂</span> <span>${m.megjelenitett_nev}</span>`;
-                lista.appendChild(item);
+                const a = document.createElement('a');
+                a.href = `mappa.html?nev=${m.tabla_neve}`;
+                a.className = 'mappa-elem';
+                a.innerHTML = `<span class="mappa-ikon">📂</span> <span>${m.megjelenitett_nev}</span>`;
+                listaDiv.appendChild(a);
             });
         }
-        betoltes();
+
+        mappakBetoltese();
     </script>
 </body>
 </html>
