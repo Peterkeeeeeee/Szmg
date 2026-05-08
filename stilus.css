@@ -1,0 +1,72 @@
+:root {
+    --white: #ffffff;
+    --orange: #ff9800;
+    --dark-blue: #1e3a8a;
+    --gray: #f4f4f4;
+    --text: #333;
+    --card-bg: #ffffff;
+}
+
+body.dark-mode {
+    --white: #0f172a;
+    --gray: #1e293b;
+    --text: #f1f5f9;
+    --card-bg: #1e293b;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--white);
+    color: var(--text);
+    margin: 0;
+    transition: 0.3s ease;
+}
+
+/* Header stílus mindenhol */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: var(--white);
+    border-bottom: 2px solid var(--gray);
+}
+
+.logo { font-size: 22px; font-weight: 800; color: var(--dark-blue); letter-spacing: -1px; }
+.logo span { color: var(--orange); }
+
+/* Gombok és Kártyák */
+.btn-primary {
+    background-color: var(--orange);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.btn-primary:hover { opacity: 0.8; transform: translateY(-2px); }
+
+.card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid var(--gray);
+}
+
+/* Inputok */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid var(--gray);
+    background: var(--white);
+    color: var(--text);
+    box-sizing: border-box;
+}
