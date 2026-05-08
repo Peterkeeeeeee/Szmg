@@ -43,13 +43,12 @@
         checkUser();
 
         async function loadFolders() {
-            // Lekérjük a 'mappak' táblát
             const { data: mappak, error } = await sb.from('mappak').select('*');
             if (error) return console.error(error);
 
             const folderView = document.getElementById('folder-view');
             
-            // Itt a titok: ÉKEZETES kulcsokat használunk, mert a képeden az van!
+            // Itt a javítás: Pontosan az ékezetes neveket írtam be (megjelenített_nev, tábla_neve)
             folderView.innerHTML = mappak.map(m => `
                 <div class="floating-folder" onclick="openFolder('${m.tábla_neve}')" style="cursor:pointer;">
                     <i class="fas fa-folder-open"></i>
@@ -62,7 +61,7 @@
             document.getElementById('folder-view').style.display = 'none';
             document.getElementById('file-view').style.display = 'block';
             
-            // Beolvassuk a Fizika 9 vagy Fizika 10 táblát
+            // A táblanévnél maradunk a kapott változónál (pl. Fizika 9)
             const { data, error } = await sb.from(tableName).select('*');
             if (error) return console.error(error);
 
