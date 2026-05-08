@@ -11,9 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
     <div class="auth-container">
-        <div class="card" id="auth-card">
+        <div class="card">
             <div class="logo">SZMG <span>ONLINE</span></div>
             
             <div id="login-view">
@@ -21,43 +20,38 @@
                 <input type="email" id="login-email" placeholder="Email cím">
                 <input type="password" id="login-password" placeholder="Jelszó">
                 <button onclick="handleLogin()">Belépés</button>
-                <p onclick="showRegister()" style="cursor:pointer; color:var(--orange); font-weight:700; margin-top:20px;">
-                    Nincs még fiókod? Regisztrálj!
-                </p>
+                <p onclick="toggleAuth(false)" style="cursor:pointer; color:var(--orange); font-weight:700;">Nincs még fiókod? Regisztrálj!</p>
             </div>
 
-            <div id="register-view" style="display: none;">
+            <div id="register-view" style="display:none;">
                 <h2>Regisztráció</h2>
                 <input type="email" id="reg-email" placeholder="Email cím">
                 <input type="password" id="reg-password" placeholder="Jelszó">
-                
-                <label style="display:block; text-align:left; margin-bottom:5px; font-weight:700;">Válaszd ki az osztályod:</label>
-                <select id="reg-class" style="width:100%; padding:12px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border); background:var(--gray); color:var(--text);">
-                    <option value="9.A">9.A</option>
-                    <option value="9.B">9.B</option>
-                    <option value="10.A">10.A</option>
-                    <option value="10.B">10.B</option>
-                </select>
-
+                <select id="reg-class"></select>
                 <button onclick="handleRegister()">Regisztráció indítása</button>
-                <p onclick="showLogin()" style="cursor:pointer; color:var(--dark-blue); font-weight:700; margin-top:20px;">
-                    Már van fiókod? Lépj be!
-                </p>
+                <p onclick="toggleAuth(true)" style="cursor:pointer; color:var(--dark-blue); font-weight:700;">Már van fiókod? Lépj be!</p>
             </div>
         </div>
     </div>
 
     <script>
-        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "YOUR_KEY_HERE");
+        const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
+        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg";
+        const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        function showRegister() {
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('register-view').style.display = 'block';
+        function toggleAuth(showLogin) {
+            document.getElementById('login-view').style.display = showLogin ? 'block' : 'none';
+            document.getElementById('register-view').style.display = showLogin ? 'none' : 'block';
         }
 
-        function showLogin() {
-            document.getElementById('register-view').style.display = 'none';
-            document.getElementById('login-view').style.display = 'block';
+        async function loadClasses() {
+            const { data } = await sb.from('osztalyok').select('nev');
+            const select = document.getElementById('reg-class');
+            if (data && data.length > 0) {
+                select.innerHTML = data.map(o => `<option value="${o.nev}">${o.nev}</option>`).join('');
+            } else {
+                select.innerHTML = '<option value="9.A">9.A</option><option value="10.A">10.A</option>';
+            }
         }
 
         async function handleLogin() {
@@ -72,21 +66,13 @@
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
             const userClass = document.getElementById('reg-class').value;
-
-            const { data, error } = await sb.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        osztaly: userClass,
-                        is_admin: false
-                    }
-                }
+            const { error } = await sb.auth.signUp({
+                email, password, options: { data: { osztaly: userClass, is_admin: false } }
             });
-
-            if (error) alert("Hiba: " + error.message);
+            if (error) alert(error.message);
             else window.location.href = "siker.html";
         }
+        loadClasses();
     </script>
 </body>
 </html>
