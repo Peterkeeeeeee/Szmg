@@ -2,56 +2,42 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SZMG Online - Bejelentkezés</title>
+    <title>SZMG Online</title>
     <link rel="stylesheet" href="stilus.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    <div class="login-card">
+    <div class="glass-card">
         <p class="brand-text">SZMG ONLINE</p>
         <h1>Bejelentkezés</h1>
         
         <form id="login-form">
             <div class="input-csoport">
                 <label>Email cím</label>
-                <input type="email" id="email" placeholder="pelda@iskola.hu" required>
+                <input type="email" id="email" placeholder="Kérem adja meg..." required>
             </div>
             <div class="input-csoport">
                 <label>Jelszó</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <input type="password" id="password" placeholder="Kérem adja meg..." required>
             </div>
             <button type="submit" class="btn-login">Belépés</button>
         </form>
-
-        <div class="ora-ikonok">
-            <button onclick="googleLogin()" class="ora-box" style="cursor:pointer; width:100%; color:white; border:none; font-size: 0.8rem;">
-                Belépés Google-lel
-            </button>
-        </div>
+        <p class="reg-link">Nincs még fiókod? Regisztrálj!</p>
     </div>
 
     <script>
-        const supabaseUrl = 'https://hiiakcswjoynxyppwczu.supabase.co';
-        const supabaseKey = 'A_TE_ANON_KEY_ED'; // Ide az API key-t másold be!
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = supabase.createClient('https://hiiakcswjoynxyppwczu.supabase.co', 'IDE_AZ_ANON_KEYT');
 
-        // Email + Jelszó belépés
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
+            const { error } = await supabase.auth.signInWithPassword({
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value
             });
-            if (error) alert(error.message);
+            if (error) alert("Hiba: " + error.message);
             else window.location.href = 'fooldal.html';
         });
-
-        // Google Auth (amit a Supabase-ben konfiguráltál)
-        async function googleLogin() {
-            await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
-        }
     </script>
 </body>
 </html>
