@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SZMG Online - Bejelentkezés</title>
     <link rel="stylesheet" href="stilus.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="hatter-animacio"></div>
-    
     <div class="login-card">
         <p class="brand-text">SZMG ONLINE</p>
         <h1>Bejelentkezés</h1>
@@ -16,32 +16,42 @@
         <form id="login-form">
             <div class="input-csoport">
                 <label>Email cím</label>
-                <input type="email" id="email" placeholder="Kérem adja meg..." required>
+                <input type="email" id="email" placeholder="pelda@iskola.hu" required>
             </div>
-            
             <div class="input-csoport">
                 <label>Jelszó</label>
-                <input type="password" id="password" placeholder="Kérem adja meg..." required>
+                <input type="password" id="password" placeholder="••••••••" required>
             </div>
-            
             <button type="submit" class="btn-login">Belépés</button>
         </form>
-        
-        <p class="reg-link">Nincs még fiókod? <a href="#">Regisztrálj!</a></p>
-        
+
         <div class="ora-ikonok">
-            <div class="ora-box">🕒</div>
-            <div class="ora-box">🕒</div>
-            <div class="ora-box">🕒</div>
+            <button onclick="googleLogin()" class="ora-box" style="cursor:pointer; width:100%; color:white; border:none; font-size: 0.8rem;">
+                Belépés Google-lel
+            </button>
         </div>
     </div>
 
     <script>
-        // Belépés és átirányítás a főoldalra
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        const supabaseUrl = 'https://hiiakcswjoynxyppwczu.supabase.co';
+        const supabaseKey = 'A_TE_ANON_KEY_ED'; // Ide az API key-t másold be!
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Email + Jelszó belépés
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            window.location.href = 'fooldal.html';
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            });
+            if (error) alert(error.message);
+            else window.location.href = 'fooldal.html';
         });
+
+        // Google Auth (amit a Supabase-ben konfiguráltál)
+        async function googleLogin() {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+        }
     </script>
 </body>
 </html>
