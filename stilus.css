@@ -1,121 +1,114 @@
 /* stilus.css */
 :root {
-    --bg-black: #000000;
-    --deep-blue: #0a192f;
-    --orange: #ff9800;
-    --glass: rgba(255, 255, 255, 0.07);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --text-white: #f8fafc;
+    --bg: #000000;
+    --card-bg: rgba(28, 28, 30, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text: #ffffff;
+    --orange: #ff9f0a; /* iOS Orange */
+    --blur: blur(25px);
+}
+
+/* Világos mód felülírása */
+body.light-mode {
+    --bg: #f2f2f7;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --text: #000000;
+    --orange: #ff9500;
 }
 
 body {
-    background-color: var(--bg-black);
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(10, 25, 47, 1) 0%, rgba(0, 0, 0, 1) 90%),
-        radial-gradient(circle at 90% 80%, rgba(10, 25, 47, 0.8) 0%, rgba(0, 0, 0, 1) 80%);
-    color: var(--text-white);
-    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    align-items: center; /* Vízszintes középre igazítás */
+    transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* HEADER */
+/* iOS szerű Header */
 header {
+    width: 100%;
+    max-width: 1000px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--glass-border);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 100;
 }
 
-.logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 2px; }
+.logo { font-weight: 700; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+.logo img { width: 35px; height: 35px; border-radius: 8px; }
 .logo span { color: var(--orange); }
 
-/* LIQUID GLASS GOMBOK */
-.btn-glass {
-    background: var(--glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+/* Központi tároló (KÖZÉPRE IGAZÍTÁSHOZ) */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Függőleges közép */
+    align-items: center; /* Vízszintes közép */
+    width: 100%;
+    max-width: 500px; /* Belépő/Admin oldalaknál ideális */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Liquid Glass Kártya */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
     border: 1px solid var(--glass-border);
-    color: white;
-    padding: 10px 22px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-block;
+    border-radius: 24px;
+    padding: 30px;
+    width: 100%;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
     text-align: center;
 }
 
-.btn-glass:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--orange);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+/* Gombok */
+.btn-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+    width: 100%;
+    margin: 5px 0;
 }
 
 .btn-orange {
     background: var(--orange);
-    color: black;
+    color: white;
     border: none;
-    padding: 10px 22px;
-    border-radius: 12px;
-    font-weight: 800;
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    width: 100%;
+    transition: 0.2s;
 }
 
-.btn-orange:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 152, 0, 0.4);
-}
+.btn-orange:hover { transform: scale(1.02); }
 
-/* KÁRTYÁK ÉS LISTÁK */
-.folder-card {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
-    padding: 40px;
-    border-radius: 28px;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid var(--glass-border);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.folder-card i {
-    font-size: 3.5rem;
-    color: var(--orange);
-    margin-bottom: 20px;
-}
-
-.file-item {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    padding: 20px 25px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid var(--glass-border);
-}
-
+/* Inputok */
 input {
     width: 100%;
     padding: 14px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 10px;
-    color: white;
-    margin: 15px 0;
+    background: rgba(120, 120, 128, 0.1);
+    border: none;
+    border-radius: 12px;
+    color: var(--text);
+    margin: 10px 0;
+    font-size: 16px;
     box-sizing: border-box;
 }
