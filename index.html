@@ -3,72 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bejelentkezés és Regisztráció</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>SZMG Online - Belépés</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="stilus.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<div class="card">
-    <h2 id="title">Bejelentkezés</h2>
-    <input type="email" id="email" placeholder="Email cím">
-    <input type="password" id="password" placeholder="Jelszó">
-    <button onclick="handleAuth()" id="auth-btn">Belépés</button>
-    <div id="status-msg"></div>
-    <div class="toggle" onclick="toggleMode()">
-        <span id="toggle-text">Nincs még fiókod? Regisztrálj!</span>
+    <div class="auth-container">
+        <div class="card" id="auth-card">
+            <div class="logo">SZMG <span>ONLINE</span></div>
+            
+            <div id="login-view">
+                <h2>Bejelentkezés</h2>
+                <input type="email" id="login-email" placeholder="Email cím">
+                <input type="password" id="login-password" placeholder="Jelszó">
+                <button onclick="handleLogin()">Belépés</button>
+                <p onclick="showRegister()" style="cursor:pointer; color:var(--orange); font-weight:700; margin-top:20px;">
+                    Nincs még fiókod? Regisztrálj!
+                </p>
+            </div>
+
+            <div id="register-view" style="display: none;">
+                <h2>Regisztráció</h2>
+                <input type="email" id="reg-email" placeholder="Email cím">
+                <input type="password" id="reg-password" placeholder="Jelszó">
+                
+                <label style="display:block; text-align:left; margin-bottom:5px; font-weight:700;">Válaszd ki az osztályod:</label>
+                <select id="reg-class" style="width:100%; padding:12px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border); background:var(--gray); color:var(--text);">
+                    <option value="9.A">9.A</option>
+                    <option value="9.B">9.B</option>
+                    <option value="10.A">10.A</option>
+                    <option value="10.B">10.B</option>
+                </select>
+
+                <button onclick="handleRegister()">Regisztráció indítása</button>
+                <p onclick="showLogin()" style="cursor:pointer; color:var(--dark-blue); font-weight:700; margin-top:20px;">
+                    Már van fiókod? Lépj be!
+                </p>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    const SB_URL = "https://hiiakcswjoynxyppwczu.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpaWFrY3N3am95bnh5cHB3Y3p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNzA1MjUsImV4cCI6MjA5Mzc0NjUyNX0.8T1gsFjZigKsegxpWuMWUbT_nw4b12ZhHPCFUxY2vgg"; 
-    
-    const sb = supabase.createClient(SB_URL, SB_KEY);
-    let isLogin = true;
+    <script>
+        const sb = supabase.createClient("https://hiiakcswjoynxyppwczu.supabase.co", "YOUR_KEY_HERE");
 
-    function toggleMode() {
-        isLogin = !isLogin;
-        document.getElementById('status-msg').style.display = 'none';
-        document.getElementById('title').innerText = isLogin ? "Bejelentkezés" : "Regisztráció";
-        document.getElementById('auth-btn').innerText = isLogin ? "Belépés" : "Fiók létrehozása";
-        document.getElementById('toggle-text').innerText = isLogin ? "Nincs még fiókod? Regisztrálj!" : "Már van fiókod? Lépj be!";
-    }
-
-    async function handleAuth() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const msgBox = document.getElementById('status-msg');
-
-        if(!email || !password) return;
-
-        msgBox.style.display = 'none';
-
-        if (isLogin) {
-            // BEJELENTKEZÉS
-            const { data, error } = await sb.auth.signInWithPassword({ email, password });
-            if (error) {
-                msgBox.innerText = "Hiba: " + error.message;
-                msgBox.className = "error";
-                msgBox.style.display = 'block';
-            } else {
-                window.location.href = "fooldal.html";
-            }
-        } else {
-            // REGISZTRÁCIÓ
-            const { data, error } = await sb.auth.signUp({ email, password });
-            if (error) {
-                msgBox.innerText = "Hiba: " + error.message;
-                msgBox.className = "error";
-                msgBox.style.display = 'block';
-            } else {
-                msgBox.innerText = "Sikeres regisztráció! Kérlek igazold vissza az e-mail címed a kapott levélben, majd jelentkezz be!";
-                msgBox.className = "info";
-                msgBox.style.display = 'block';
-            }
+        function showRegister() {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('register-view').style.display = 'block';
         }
-    }
-</script>
+
+        function showLogin() {
+            document.getElementById('register-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'block';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await sb.auth.signInWithPassword({ email, password });
+            if (error) alert("Hiba: " + error.message);
+            else window.location.href = "fooldal.html";
+        }
+
+        async function handleRegister() {
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const userClass = document.getElementById('reg-class').value;
+
+            const { data, error } = await sb.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        osztaly: userClass,
+                        is_admin: false
+                    }
+                }
+            });
+
+            if (error) alert("Hiba: " + error.message);
+            else window.location.href = "siker.html";
+        }
+    </script>
 </body>
 </html>
