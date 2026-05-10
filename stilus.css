@@ -1,43 +1,133 @@
-/* Oldalsáv és tartalom egymás mellett */
-.app-container {
-    display: flex;
-    height: calc(100vh - 60px); /* Levonjuk a fejléc magasságát */
+:root {
+    --white: #ffffff;
+    --orange: #ff9800;
+    --dark-blue: #1e3a8a;
+    --gray: #f8f9fa;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --card-bg: #ffffff;
+    /* Magyar nyelvű ékezeteket támadó modern betűtípus */
+    --font-family: 'Poppins', sans-serif;
 }
 
-.sidebar {
-    width: 280px;
-    background-color: var(--card-bg);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: margin-left 0.3s;
+/* Rendszer szintű sötét mód felismerése */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #0f172a;
+        --gray: #1e293b;
+        --border: #334155;
+        --text: #f1f5f9;
+        --card-bg: #1e293b;
+    }
 }
 
-/* Ha elrejtjük a menüt */
-.sidebar.collapsed {
-    margin-left: -280px;
+/* Kézi sötét mód felülbírálás (ha a JS-ből váltasz) */
+body.dark-mode {
+    --white: #0f172a;
+    --gray: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --card-bg: #1e293b;
 }
 
-.content-area {
-    flex-grow: 1; /* Ez tölti ki a maradék helyet a jobb oldalon */
-    overflow-y: auto;
-    padding: 20px;
+body {
+    font-family: var(--font-family);
     background-color: var(--white);
-    position: relative;
-}
-
-/* A fa-szerű megjelenés stílusa a menüben */
-.tree-item {
-    padding: 12px;
-    margin: 5px 0;
-    cursor: pointer;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     color: var(--text);
+    margin: 0;
+    /* Vertikális és horizontális középre helyezés */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.tree-item:hover {
+/* Bejelentkezés középre helyezése */
+.auth-container {
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    /* Nagyobb belső térköz */
+    padding: 3rem 4rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+    width: 100%;
+    /* Nagyobb maximális szélesség */
+    max-width: 500px;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.logo {
+    /* Nagyobb és stílusosabb logó */
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dark-blue);
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
+}
+.logo span { color: var(--orange); }
+
+h2 {
+    /* Nagyobb cím */
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
+
+input {
+    width: 100%;
+    /* Nagyobb input mezők */
+    padding: 15px 20px;
+    margin: 12px 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
     background: var(--gray);
+    color: var(--text);
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: var(--font-family);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+}
+
+button {
+    width: 100%;
+    /* Nagyobb gomb */
+    padding: 15px;
+    background-color: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-family: var(--font-family);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #f57c00;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+p {
+    margin-top: 25px;
+    font-size: 1rem;
+    font-family: var(--font-family);
 }
